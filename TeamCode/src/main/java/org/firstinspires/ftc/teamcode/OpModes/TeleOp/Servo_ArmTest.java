@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
+@Config
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Servo_ArmTest")
 
 public class Servo_ArmTest extends LinearOpMode {
