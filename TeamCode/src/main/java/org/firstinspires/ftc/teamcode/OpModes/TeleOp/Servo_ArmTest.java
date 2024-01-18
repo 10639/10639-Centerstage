@@ -23,22 +23,27 @@ public class Servo_ArmTest extends LinearOpMode {
         rightPivot.scaleRange(min, max);
 
 
+        if (isStopRequested()) return;
+        while (!isStopRequested()) {
+            while (opModeIsActive()) {
+                switch (state) {
+                    case "idle":
+                        setPosition(0, 1);
+                        break;
+                    case "score":
+                        setPosition(1, 0);
+                        break;
+                }
 
-        switch(state) {
-            case "idle":
-                setPosition(0, 1);
-                break;
-            case "score":
-                setPosition(1, 0);
-                break;
+                telemetry.addData("State", state);
+                telemetry.addData("Min Position", min);
+                telemetry.addData("Max Position", max);
+                telemetry.update();
+
+
+            }
+
         }
-
-        telemetry.addData("State", state);
-        telemetry.addData("Min Position", min);
-        telemetry.addData("Max Position", max);
-        telemetry.update();
-
-
 
     }
 
