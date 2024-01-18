@@ -13,7 +13,6 @@ public class Servo_ArmTest extends LinearOpMode {
     public static Servo leftPivot, rightPivot;
 
 
-
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -21,7 +20,9 @@ public class Servo_ArmTest extends LinearOpMode {
         rightPivot = hardwareMap.get(Servo.class, "rightPivot");
 
         leftPivot.scaleRange(min, max);
-        rightPivot.scaleRange(max, min);
+        rightPivot.scaleRange(min, max);
+
+
 
         switch(state) {
             case "idle":

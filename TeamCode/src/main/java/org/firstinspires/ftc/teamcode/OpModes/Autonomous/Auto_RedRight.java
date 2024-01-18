@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Intake;
-import org.firstinspires.ftc.teamcode.Subsystems.Vision.blueProp;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Lift;
@@ -22,7 +21,6 @@ public class Auto_RedRight extends LinearOpMode {
     Lift liftSystem;
     Arm armSystem;
     Intake intakeSystem;
-    blueProp bluePipeline;
     OpenCvCamera camera;
     //  Detection detectionSystem;
 
@@ -40,7 +38,6 @@ public class Auto_RedRight extends LinearOpMode {
         liftSystem = new Lift(hardwareMap);
         armSystem = new Arm(hardwareMap);
         intakeSystem = new Intake(hardwareMap);
-        bluePipeline = new blueProp(telemetry);
         //  detectionSystem = new Detection(hardwareMap);
         //ElapsedTime time = new ElapsedTime();
 
