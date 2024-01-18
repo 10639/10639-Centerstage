@@ -7,14 +7,8 @@ public class Constants {
     public static final double COUNTS_PER_MOTOR_REV    = 103.8 ;   // eg: GoBILDA 1620m RPM Yellow Jacket
     public static final double DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
     public static final double WHEEL_DIAMETER_INCHES   = 1.673 ;     // For figuring circumference
-    public static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
+    public static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     //19.7498748746487
-
-    public static final double LIFT_SPEED = 1;
-    public static final double LIFT_RETRACTION_DIMINISHER = 1.2;
-    public static final int MANUAL_EXTEND_INCREMENT = 25;
-    public static final int MANUAL_DESCEND_INCREMENT = 25;
 
     static final double FIRST_LEVEL = 10;
     static final double SECOND_LEVEL = 20;
@@ -24,6 +18,7 @@ public class Constants {
     public static final int LIFT_FIRST_LEVEL = (int) (FIRST_LEVEL * COUNTS_PER_INCH);
     public static final int LIFT_SECOND_LEVEL = (int) (SECOND_LEVEL * COUNTS_PER_INCH);
     public static final int LIFT_THIRD_LEVEL = (int) (THIRD_LEVEL * COUNTS_PER_INCH);
+
     //Proportional, Integral, Derivative gains.
     public static final double Kp = 0.05, Ki = 0, Kd = 0.0001;
     //Feedforward component -> Since we're doing this for a lift; we'll do a G value (gravity).
