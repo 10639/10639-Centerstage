@@ -27,10 +27,11 @@ public class TeleOp extends LinearOpMode {
         FAST(0.9);
         final double multiplier; //Default
 
-    SpeedState(double value) {
-        this.multiplier = value;
+        SpeedState(double value) {
+            this.multiplier = value;
+        }
     }
-}
+
     SpeedState speedState;
 
     @Override
@@ -55,7 +56,6 @@ public class TeleOp extends LinearOpMode {
         leftSlide.setDirection(DcMotor.Direction.FORWARD);
 
 
-
         armSystem.init();
         intakeSystem.init();
 
@@ -65,63 +65,65 @@ public class TeleOp extends LinearOpMode {
 
 
         if (isStopRequested()) return;
-        while (!isStopRequested() && opModeIsActive()) {
+        while (!isStopRequested()) {
+            while (opModeIsActive()) {
 
 
-            driveTrain.setWeightedDrivePower(
-                    new Pose2d(
-                            -gamepad1.left_stick_y * speedState.multiplier,
-                            -gamepad1.left_stick_x * speedState.multiplier,
-                            -gamepad1.right_stick_x * speedState.multiplier
-                    )
-            );
+                driveTrain.setWeightedDrivePower(
+                        new Pose2d(
+                                -gamepad1.left_stick_y * speedState.multiplier,
+                                -gamepad1.left_stick_x * speedState.multiplier,
+                                -gamepad1.right_stick_x * speedState.multiplier
+                        )
+                );
 
-            armSystem.loop(gamepad2);
-            intakeSystem.loop(gamepad2);
+                armSystem.loop(gamepad2);
+                intakeSystem.loop(gamepad2);
 
 
-            if(gamepad1.left_bumper) {
-                speedState = SpeedState.NORMAL;
-            } else if(gamepad1.right_bumper) {
-                speedState = SpeedState.FAST;
-            }
-
-            if(gamepad1.square) {
-                if (target == Constants.LIFT_LEVEL_ZERO) {
-                    previousTarget = 0;
+                if (gamepad1.left_bumper) {
+                    speedState = SpeedState.NORMAL;
+                } else if (gamepad1.right_bumper) {
+                    speedState = SpeedState.FAST;
                 }
-                target = Constants.LIFT_FIRST_LEVEL;
-            } else if(gamepad1.triangle) {
-                if (target == Constants.LIFT_LEVEL_ZERO) {
-                    previousTarget = 0;
+
+                if (gamepad1.square) {
+                    if (target == Constants.LIFT_LEVEL_ZERO) {
+                        previousTarget = 0;
+                    }
+                    target = Constants.LIFT_FIRST_LEVEL;
+                } else if (gamepad1.triangle) {
+                    if (target == Constants.LIFT_LEVEL_ZERO) {
+                        previousTarget = 0;
+                    }
+                    target = Constants.LIFT_SECOND_LEVEL;
+                } else if (gamepad1.circle) {
+                    if (target == Constants.LIFT_LEVEL_ZERO) {
+                        previousTarget = 0;
+                    }
+                    target = Constants.LIFT_THIRD_LEVEL;
+                } else if (gamepad1.cross) {
+                    previousTarget = target;
+                    target = Constants.LIFT_LEVEL_ZERO;
                 }
-                target = Constants.LIFT_SECOND_LEVEL;
-            } else if(gamepad1.circle) {
-                if(target == Constants.LIFT_LEVEL_ZERO) {
-                    previousTarget = 0;
-                }
-                target = Constants.LIFT_THIRD_LEVEL;
-            } else if(gamepad1.cross) {
-                previousTarget = target;
-                target = Constants.LIFT_LEVEL_ZERO;
-            }
 
-            int state = leftSlide.getCurrentPosition();
-            double pid = controller.calculate(state, target);
-            double power = pid + Constants.Kf;
+                int state = leftSlide.getCurrentPosition();
+                double pid = controller.calculate(state, target);
+                double power = pid + Constants.Kf;
 
-            leftSlide.setPower(power * 0.2);
-            rightSlide.setPower(power * 0.2);
+                leftSlide.setPower(power * 0.2);
+                rightSlide.setPower(power * 0.2);
 
 
-            telemetry.addData("Slides Target", target);
-            telemetry.addData("rightSlide Position", rightSlide.getCurrentPosition());
-            telemetry.addData("leftSlide Position", leftSlide.getCurrentPosition());
-            telemetry.addData("Drivetrain Speed", speedState);
-            telemetry.update();
+                telemetry.addData("Slides Target", target);
+                telemetry.addData("rightSlide Position", rightSlide.getCurrentPosition());
+                telemetry.addData("leftSlide Position", leftSlide.getCurrentPosition());
+                telemetry.addData("Drivetrain Speed", speedState);
+                telemetry.update();
 
             }
         }
     }
+}
 
 

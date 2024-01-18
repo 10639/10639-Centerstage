@@ -41,29 +41,22 @@ public class Lift {
 
     public void loop(Gamepad gamepad) {
 
-        if(gamepad.square) {
+        if (gamepad.square) {
             target = Constants.LIFT_FIRST_LEVEL;
-        } else if(gamepad.triangle) {
+        } else if (gamepad.triangle) {
             target = Constants.LIFT_SECOND_LEVEL;
-        } else if(gamepad.circle) {
+        } else if (gamepad.circle) {
             target = Constants.LIFT_THIRD_LEVEL;
-        } else if(gamepad.cross) {
+        } else if (gamepad.cross) {
             target = Constants.LIFT_LEVEL_ZERO;
-        } else if(gamepad.dpad_up) {
-            target = leftSlide.getCurrentPosition() + Constants.MANUAL_EXTEND_INCREMENT;
-        } else if(gamepad.dpad_down) {
-            target = leftSlide.getCurrentPosition() - Constants.MANUAL_DESCEND_INCREMENT;
+
+
+            int state = leftSlide.getCurrentPosition();
+            double pid = controller.calculate(state, target);
+            double power = pid + Constants.Kf;
+            leftSlide.setPower(state < target ? (power * 0.8) : (power * 0.1));
+            rightSlide.setPower(state < target ? (power * 0.8) : (power * 0.1));
         }
-
-
-
-        int state = leftSlide.getCurrentPosition();
-        double pid = controller.calculate(state, target);
-        double power = pid + Constants.Kf;
-        leftSlide.setPower(state < target ? (power * 0.8) : (power * 0.1));
-        rightSlide.setPower(state < target ? (power * 0.8) : (power * 0.1));
-    }
-
 
 
 //    public void showInfo(Telemetry telemetry) {
@@ -73,5 +66,7 @@ public class Lift {
 //        telemetry.addData("Lift Power", Motor.getPower());
 //        telemetry.addData("Lift Velocity", Motor.getVelocity());
 //    }
+
+    }
 
 }

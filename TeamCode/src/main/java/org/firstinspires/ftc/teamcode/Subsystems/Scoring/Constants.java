@@ -36,11 +36,24 @@ public class Constants {
     public static final double rightArm_Idle = 0;
     public static final double leftArm_Score = 0;
     public static final double rightArm_Score = 1;
-    public static final double retractIntake = 0; //Intake retracted position
-    public static final double extendIntake = 1; //Extend intake position
-    public static final double Sweep = 1; //POSITIVE POWER
-    public static final double retractSweep = -1; //NEGATIVE POWER
-    public static final double terminateSweep = 0; //TERMINATE POWER
+
+
+
+    /** ======= CONSTANTS FOR INTAKE  ======= **/
+    public static final double Sweep = -1;
+    public static final double reverseSweep = 1;
+    public static final double intakeExtend = 1;
+    public static final double intakeRetract = 0;
+    public static final double boxSweep = -1;
+    public static final double boxReverseSweep = 1;
+    public static final double terminatePower = 0;
+
+
+
+    /** ======= CONSTANTS FOR VISION  ======= **/
+    public static final double CONFIDENCE = 0.19;
+
+
 
 
 }

@@ -34,10 +34,19 @@ public class Intake {
 
 //SWITCHED 1/13/24 MOTOR POSITIONS
 
-    public void Sweep() { sweeper.setPower(Constants.Sweep * -1); }
-    public void reverseSweep() { sweeper.setPower(Constants.Sweep); }
-    public void terminateSweep() { sweeper.setPower(0); }
+    public void Sweep() { sweeper.setPower(Constants.Sweep); }
+    public void reverseSweep() { sweeper.setPower(Constants.reverseSweep); }
+    public void terminateSweep() { sweeper.setPower(Constants.terminatePower); }
 
+    public void extendIntake() { intake.setPosition(Constants.intakeExtend); }
+
+    public void retractIntake () { intake.setPosition(Constants.intakeRetract); }
+
+    public void boxSweep() { boxSweeper.setPower(Constants.boxSweep); }
+
+    public void boxReverseSweep() { boxSweeper.setPower(Constants.boxReverseSweep); }
+
+    public void terminateBoxSweeper() { boxSweeper.setPower(Constants.terminatePower);}
 
     public void initIdle() {
         terminateSweep();
@@ -45,24 +54,29 @@ public class Intake {
 
     public void loop(Gamepad gamepad) {
 
-      if(gamepad.dpad_up) {
+      if(gamepad.dpad_up) { //Extend Intake + Spin Intake Pixels + Sweep inside Box
+          extendIntake();
           Sweep();
-      } else if(gamepad.dpad_down) {
+          boxSweep();
+      } else if(gamepad.dpad_down) { //Reverse Intake Spin + Reverse outside Box + Retracts Intake
           reverseSweep();
-      } else if(gamepad.left_stick_button) {
+          boxReverseSweep();
+          retractIntake();
+      } else if(gamepad.left_stick_button) { //Terminate Intake Spin
           terminateSweep();
-      } else if(gamepad.dpad_left) { //Reverses Box Spin
-          boxSweeper.setPower(1);
-      } else if(gamepad.dpad_right) { //Spins Pixels in
-          boxSweeper.setPower(-1);
       } else if(gamepad.right_stick_button) { //Terminates Box spin
-          boxSweeper.setPower(0);
+          terminateBoxSweeper();
+      } else if(gamepad.dpad_left) { //Reverses Box Spin
+          boxReverseSweep();
       } else if(gamepad.left_bumper) { //Default V4b Position
-          intake.setPosition(0);
+          retractIntake();
       } else if(gamepad.right_bumper) { //Outer V4b Position
-          intake.setPosition(1);
+          extendIntake();
       }
 
+
+        //      } else if(gamepad.dpad_right) { //Spins Pixels in
+//          boxSweeper.setPower(-1);
 
     }
 }

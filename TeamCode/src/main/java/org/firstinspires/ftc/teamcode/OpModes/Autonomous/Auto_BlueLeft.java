@@ -5,28 +5,17 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.firstinspires.ftc.teamcode.Subsystems.Control.DriveTrain;
-import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Constants;
-import org.firstinspires.ftc.teamcode.Subsystems.Vision.blueProp;
-import org.firstinspires.ftc.teamcode.Subsystems.Vision.Detection;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Arm;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Intake;
-import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
 
 @Autonomous(name = "Auto_BlueLeft", preselectTeleOp = "CenterStage_TeleOp")
 public class Auto_BlueLeft extends LinearOpMode {
@@ -36,7 +25,6 @@ public class Auto_BlueLeft extends LinearOpMode {
     Lift liftSystem;
     Arm armSystem;
     Intake intakeSystem;
-    blueProp bluePipeline;
     OpenCvCamera camera;
     //  Detection detectionSystem;
 
@@ -61,7 +49,6 @@ public class Auto_BlueLeft extends LinearOpMode {
         liftSystem = new Lift(hardwareMap);
         armSystem = new Arm(hardwareMap);
         intakeSystem = new Intake(hardwareMap);
-        bluePipeline = new blueProp(telemetry);
       //  detectionSystem = new Detection(hardwareMap);
         //ElapsedTime time = new ElapsedTime();
 
@@ -71,8 +58,6 @@ public class Auto_BlueLeft extends LinearOpMode {
         int cameraMonitorViewId;
          cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
             camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
-
-            camera.setPipeline(bluePipeline);
             FtcDashboard.getInstance().startCameraStream(camera, 0);
             camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                                              @Override
