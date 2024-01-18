@@ -1,37 +1,50 @@
 package org.firstinspires.ftc.teamcode.OpModes.Autonomous;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvCamera;
 import org.firstinspires.ftc.teamcode.Subsystems.Control.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Constants;
-import org.firstinspires.ftc.teamcode.Subsystems.Vision.ConeSensor;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.blueProp;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.Detection;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Arm;
+import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Intake;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
 
-@Autonomous(name = "Auto_BlueLeft", preselectTeleOp = "PowerPlay_TeleOp")
+@Autonomous(name = "Auto_BlueLeft", preselectTeleOp = "CenterStage_TeleOp")
 public class Auto_BlueLeft extends LinearOpMode {
 
     public SampleMecanumDrive driveTrain;
     public PIDController controller;
     Lift liftSystem;
     Arm armSystem;
-    ConeSensor coneSensor;
-    Detection detectionSystem;
+    Intake intakeSystem;
+    blueProp bluePipeline;
+    OpenCvCamera camera;
+    //  Detection detectionSystem;
 
 
     Pose2d initPose;
-    Vector2d midWayPose;
-    Vector2d dropConePose;
-    Vector2d parkingLocationOne, parkingLocationTwo, parkingLocationThree;
+    Vector2d leftLocation, centerLocation, rightLocation;
+    Vector2d finalPose;
+   // Vector2d parkingLocationOne, parkingLocationTwo, parkingLocationThree;
 
     public enum TrajectoryState {PRELOAD, CS, CS_TO_MJ, PARK, IDLE}
 
@@ -47,58 +60,68 @@ public class Auto_BlueLeft extends LinearOpMode {
         driveTrain = new SampleMecanumDrive(hardwareMap);
         liftSystem = new Lift(hardwareMap);
         armSystem = new Arm(hardwareMap);
-        //    coneSensor = new ConeSensor(hardwareMap);
-        detectionSystem = new Detection(hardwareMap);
-        ElapsedTime time = new ElapsedTime();
+        intakeSystem = new Intake(hardwareMap);
+        bluePipeline = new blueProp(telemetry);
+      //  detectionSystem = new Detection(hardwareMap);
+        //ElapsedTime time = new ElapsedTime();
 
-        liftSystem.init();
+      //  liftSystem.init();
         armSystem.init();
-        armSystem.rotationIdle();
-        armSystem.leftPivot.setPosition(0.5);
-        armSystem.rightPivot.setPosition(0.5);
-        //     coneSensor.init();
-        detectionSystem.init();
+        intakeSystem.init();
+        int cameraMonitorViewId;
+         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+            camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
 
-        initPose = new Pose2d(-35, -58, Math.toRadians(270));
-        midWayPose = new Vector2d(-35, -10);
+            camera.setPipeline(bluePipeline);
+            FtcDashboard.getInstance().startCameraStream(camera, 0);
+            camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+                                             @Override
+                                             public void onOpened() {
+                                                 camera.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT);
+                                             }
+
+                                             @Override
+                                             public void onError(int errorCode) {
+
+                                             }
+                                         });
+      //  detectionSystem.init(bluePipeline);
+
+
+
+
+       // initPose = new Pose2d(-35, -58, Math.toRadians(270));
+        initPose = new Pose2d(13, 58, Math.toRadians(90));
+        finalPose = new Vector2d(60, 56);
+    //    midWayPose = new Vector2d(-35, -10);
         //  dropConePose = new Vector2d(-29, 28);
 
-        parkingLocationOne = new Vector2d(-58, -32);
-        parkingLocationTwo = new Vector2d(-35, -32);
-        parkingLocationThree = new Vector2d(-13, -32);
 
-        TrajectorySequence preload = driveTrain.trajectorySequenceBuilder(initPose)
-                .lineToConstantHeading(new Vector2d(-34, -32))
+
+        TrajectorySequence centerPreload = driveTrain.trajectorySequenceBuilder(initPose)
+                .lineToConstantHeading(new Vector2d(13,30))
+                .lineToConstantHeading(new Vector2d(13, 58))
+                .strafeTo(new Vector2d(60, 58))
                 .build();
 
-        TrajectorySequence locationOne = driveTrain.trajectorySequenceBuilder(preload.end())
-                .lineToConstantHeading(parkingLocationOne)
-                .build();
-
-        TrajectorySequence locationTwo = driveTrain.trajectorySequenceBuilder(preload.end())
-                .lineToConstantHeading(parkingLocationTwo)
-                .build();
-
-        TrajectorySequence locationThree = driveTrain.trajectorySequenceBuilder(preload.end())
-                .lineToConstantHeading(parkingLocationThree)
-                .build();
 
         driveTrain.getLocalizer().setPoseEstimate(initPose);
         while (!isStopRequested() && !opModeIsActive()) {
-            identifiedLocation = detectionSystem.detect();
-            telemetry.addData("Detected Parking Location:", identifiedLocation);
+            //identifiedLocation = detectionSystem.detect();
+         //   telemetry.addData("Detected Parking Location:", identifiedLocation);
             telemetry.addLine("Initialization Ready");
             telemetry.update();
         }
 
         waitForStart();
-        driveTrain.followTrajectorySequenceAsync(preload);
-        detectionSystem.stop();
+        driveTrain.followTrajectorySequenceAsync(centerPreload);
+    //    detectionSystem.stop();
 
         while (!isStopRequested()) {
             while (opModeIsActive()) {
                 driveTrain.update();
 
+               /*
                 liftSystem.controller.setPID(Constants.Kp, Constants.Ki, Constants.Kd);
                 int state = liftSystem.rightSlide.getCurrentPosition();
                 telemetry.addData("state", state);
@@ -169,6 +192,7 @@ public class Auto_BlueLeft extends LinearOpMode {
 
                 }
 
+                */
             }
         }
 

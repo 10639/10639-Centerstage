@@ -8,77 +8,33 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Arm {
 
     private final HardwareMap hardwareMap;
-    public Servo claw, rotation, leftPivot, rightPivot;
+    public Servo leftPivot, rightPivot;
     public Arm(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
     }
 
     public void init() {
-        claw = hardwareMap.get(Servo.class, "claw");
-        rotation = hardwareMap.get(Servo.class, "rotation");
         leftPivot = hardwareMap.get(Servo.class, "leftPivot");
         rightPivot = hardwareMap.get(Servo.class, "rightPivot");
-        closeArm(); //Close the arm to grab the preloaded
-        initIdle(); // Put the arm slightly higher so when the drivetrain itself is backed up against the wall, the arm won't get stopped by the wall.
+        leftPivot.scaleRange(0.6, 0.75);  //0 Pos becomes 0.3 -- 1 Pos becomes 0.8;
+        armIdle();
     }
-
-    public void openArm() {
-        claw.setPosition(Constants.openArm);
-    }
-
-    public void closeArm() {
-        claw.setPosition(Constants.closeArm);
-    }
-
-    public void rotationScore() {
-        rotation.setPosition(Constants.rotationScore);
-    }
-
-    public void rotationIdle() {
-        rotation.setPosition(Constants.rotationIdle);
-    }
-
 
     public void armIdle() {
-        leftPivot.setPosition(Constants.leftArm_Idle);
-        rightPivot.setPosition(Constants.rightArm_Idle);
+        leftPivot.setPosition(0);
     }
 
     public void armScore() {
-        leftPivot.setPosition(Constants.leftArm_Score);
-        rightPivot.setPosition(Constants.rightArm_Score);
-    }
-    public void initIdle() {
-        closeArm();
-        armIdle();
-        rotationIdle();
-        leftPivot.setPosition(0.5);
-        rightPivot.setPosition(0.5);
-    }
-
-    public void scoreReady() {
-        closeArm();
-        rotationScore();
-        armScore();
-    }
-
-    public void scoreIdle() {
-        closeArm();
-        armIdle();
-        rotationIdle();
+        leftPivot.setPosition(1);
     }
 
     public void loop(Gamepad gamepad) {
 
-        if (gamepad.left_bumper) {
-            openArm();
-        } else if (gamepad.right_bumper) {
-            closeArm();
-        } else if(gamepad.triangle) {
-            scoreReady();
-        } else if(gamepad.cross) {
-            scoreIdle();
-        }
+         if(gamepad.triangle) {
+             armScore();
+         } else if(gamepad.cross) {
+             armIdle();
+         }
 
     }
 }

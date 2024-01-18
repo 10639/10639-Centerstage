@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -19,7 +20,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Constants;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.LiftTest;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TEST")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "CenterStage_TeleOp")
 public class Test extends LinearOpMode {
 
     public SampleMecanumDrive driveTrain;
@@ -27,8 +28,8 @@ public class Test extends LinearOpMode {
     public DcMotorEx leftSlide, rightSlide;
     public Arm armSystem;
     public Intake intakeSystem;
-  //  public LiftTest liftSystem;
     public static int target = 0;
+    public static int previousTarget;
 
     public enum SpeedState {
         NORMAL(0.5),
@@ -58,21 +59,21 @@ public class Test extends LinearOpMode {
         leftSlide.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         leftSlide.setDirection(DcMotor.Direction.FORWARD);
 
+
         armSystem = new Arm(hardwareMap);
         intakeSystem = new Intake(hardwareMap);
-        //liftSystem = new LiftTest(hardwareMap);
-        armSystem.init(); //
+        armSystem.init();
         intakeSystem.init();
-
-        // liftSystem.init();
 
 
         speedState = SpeedState.NORMAL;
+        target = 0;
 
 
         if (isStopRequested()) return;
         while (!isStopRequested()) {
             while (opModeIsActive()) {
+                //Open Claw on Run
 
 
                 if(gamepad1.left_bumper) {
@@ -93,35 +94,62 @@ public class Test extends LinearOpMode {
                 intakeSystem.loop(gamepad2);
 
                 if(gamepad1.square) {
+                    if (target == Constants.LIFT_LEVEL_ZERO) {
+                        previousTarget = 0;
+                    }
                     target = Constants.LIFT_FIRST_LEVEL;
                 } else if(gamepad1.triangle) {
+                    if (target == Constants.LIFT_LEVEL_ZERO) {
+                        previousTarget = 0;
+                    }
                     target = Constants.LIFT_SECOND_LEVEL;
                 } else if(gamepad1.circle) {
+                    if(target == Constants.LIFT_LEVEL_ZERO) {
+                        previousTarget = 0;
+                    }
                     target = Constants.LIFT_THIRD_LEVEL;
                 } else if(gamepad1.cross) {
+                    previousTarget = target;
                     target = Constants.LIFT_LEVEL_ZERO;
-                } else if(gamepad1.dpad_up) {
-                    target = rightSlide.getCurrentPosition() + Constants.MANUAL_EXTEND_INCREMENT;
-                } else if(gamepad1.dpad_down) {
-                    target = rightSlide.getCurrentPosition() - Constants.MANUAL_DESCEND_INCREMENT;
                 }
 
-                int state = rightSlide.getCurrentPosition();
+                int state = leftSlide.getCurrentPosition();
                 double pid = controller.calculate(state, target);
                 double power = pid + Constants.Kf;
 
-                if (state > target) {
-                    // lift is going down, adjust the power
-                    leftSlide.setPower(power * 0.1);
-                    rightSlide.setPower(power * 0.1);
-                } else {
-                    // lift is going up, no need to adjust the power
-                    leftSlide.setPower(power * 0.3);
-                    rightSlide.setPower(power * 0.3);
-                }
+                leftSlide.setPower(power * 0.2);
+                rightSlide.setPower(power * 0.2);
+
+
+
+
+//                } else if(gamepad1.dpad_up) {
+//                    target = leftSlide.getCurrentPosition() + Constants.MANUAL_EXTEND_INCREMENT;
+//                } else if(gamepad1.dpad_down) {
+//                    target = leftSlide.getCurrentPosition() - Constants.MANUAL_DESCEND_INCREMENT;
+//                }
+
+
+
+
+
+
+//                if (state > target) {
+//                    // lift is going down, adjust the power
+//                    leftSlide.setPower(power * 0.8);
+//                    rightSlide.setPower(power * 0.8);
+//                } else {
+//                    // lift is going up, no need to adjust the power
+//                    leftSlide.setPower(power * 0.3);
+//                    rightSlide.setPower(power * 0.3);
+//                }
+
+                telemetry.addData("rightSlide Position", rightSlide.getCurrentPosition());
+                telemetry.addData("leftSlide Position", leftSlide.getCurrentPosition());
+                telemetry.addData("Target", target);
+                telemetry.update();
             }
         }
-
     }
 
 }

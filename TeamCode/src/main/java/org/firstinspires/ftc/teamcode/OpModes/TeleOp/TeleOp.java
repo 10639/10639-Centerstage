@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Lift;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "PowerPlay_TeleOp")
+@Disabled
 public class TeleOp extends LinearOpMode {
 
     public PIDController controller;

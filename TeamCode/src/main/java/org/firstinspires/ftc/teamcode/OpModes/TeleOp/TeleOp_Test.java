@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Arm;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Constants;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TESTING")
+@Disabled
 public class TeleOp_Test extends LinearOpMode {
 
   public PIDController controller;
@@ -65,7 +67,6 @@ public class TeleOp_Test extends LinearOpMode {
         } else if(gamepad2.dpad_down) {
           target = liftMotor.getCurrentPosition() - Constants.MANUAL_DESCEND_INCREMENT;
         }  else if(gamepad2.left_trigger > 0) {
-          armSystem.openArm();
           target = Constants.LIFT_LEVEL_ZERO;
         }
 

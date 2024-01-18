@@ -16,7 +16,7 @@ public class Constants {
     public static final int MANUAL_EXTEND_INCREMENT = 25;
     public static final int MANUAL_DESCEND_INCREMENT = 25;
 
-    static final double FIRST_LEVEL = 13;
+    static final double FIRST_LEVEL = 10;
     static final double SECOND_LEVEL = 20;
     static final double THIRD_LEVEL = 26;
 

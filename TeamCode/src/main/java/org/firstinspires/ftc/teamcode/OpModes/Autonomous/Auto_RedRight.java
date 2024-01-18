@@ -1,100 +1,105 @@
 package org.firstinspires.ftc.teamcode.OpModes.Autonomous;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Subsystems.Control.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Constants;
+import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.ConeSensor;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.Detection;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.blueProp;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Arm;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "Auto_RedRight", preselectTeleOp = "PowerPlay_TeleOp")
+@Autonomous(name = "Auto_RedRight", preselectTeleOp = "CenterStage_TeleOp")
 public class Auto_RedRight extends LinearOpMode {
 
-    DriveTrain driveTrain;
+    public SampleMecanumDrive driveTrain;
+    public PIDController controller;
     Lift liftSystem;
     Arm armSystem;
-    ConeSensor coneSensor;
-    Detection detectionSystem;
+    Intake intakeSystem;
+    blueProp bluePipeline;
+    OpenCvCamera camera;
+    //  Detection detectionSystem;
+
 
     Pose2d initPose;
-    Vector2d midWayPose;
-    Vector2d dropConePose;
-    Vector2d parkingLocationOne, parkingLocationTwo, parkingLocationThree;
-
-    public enum TrajectoryState { PRELOAD, CS, CS_TO_MJ, PARK, IDLE }
-    TrajectoryState trajectoryState = TrajectoryState.PRELOAD;
-
-    public static int identifiedLocation = 2;
-    public static int targetPosition = 0;
+    Vector2d leftLocation, centerLocation, rightLocation;
+    Vector2d finalPose;
+    // Vector2d parkingLocationOne, parkingLocationTwo, parkingLocationThree;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        driveTrain = new DriveTrain(hardwareMap);
+        driveTrain = new SampleMecanumDrive(hardwareMap);
         liftSystem = new Lift(hardwareMap);
         armSystem = new Arm(hardwareMap);
-        coneSensor = new ConeSensor(hardwareMap);
-        detectionSystem = new Detection(hardwareMap);
-        ElapsedTime time = new ElapsedTime();
+        intakeSystem = new Intake(hardwareMap);
+        bluePipeline = new blueProp(telemetry);
+        //  detectionSystem = new Detection(hardwareMap);
+        //ElapsedTime time = new ElapsedTime();
 
-        liftSystem.init();
+        //  liftSystem.init();
         armSystem.init();
-        coneSensor.init();
-        detectionSystem.init();
+        intakeSystem.init();
 
-        initPose = new Pose2d(54, 36, Math.toRadians(0));
-        midWayPose = new Vector2d(29, 36);
-        dropConePose = new Vector2d(29, 27);
+        //  detectionSystem.init(bluePipeline);
 
-        parkingLocationOne = new Vector2d(36, 55);
-        parkingLocationTwo = new Vector2d(36, 38);
-        parkingLocationThree = new Vector2d(36,15);
 
-        TrajectorySequence preload = driveTrain.trajectorySequenceBuilder(initPose)
-                .lineToConstantHeading(midWayPose)
-                .strafeTo(dropConePose)
-                .forward(1)
+
+
+        initPose = new Pose2d(13, 58, Math.toRadians(90));
+        finalPose = new Vector2d(60, 56);
+        //    midWayPose = new Vector2d(-35, -10);
+        //  dropConePose = new Vector2d(-29, 28);
+
+
+
+        TrajectorySequence centerPreload = driveTrain.trajectorySequenceBuilder(initPose)
+                .lineToConstantHeading(new Vector2d(13,30))
+                .lineToConstantHeading(new Vector2d(13, 58))
+                .setReversed(true)
+                .strafeTo(new Vector2d(-60, 58))
                 .build();
 
-        TrajectorySequence locationOne = driveTrain.trajectorySequenceBuilder(preload.end())
-                .back(2)
-                .lineToConstantHeading(parkingLocationOne)
-                .build();
-
-        TrajectorySequence locationTwo = driveTrain.trajectorySequenceBuilder(preload.end())
-                .back(2)
-                .lineToConstantHeading(parkingLocationTwo)
-                .build();
-
-        TrajectorySequence locationThree = driveTrain.trajectorySequenceBuilder(preload.end())
-                .back(2)
-                .lineToConstantHeading(parkingLocationThree)
-                .build();
 
         driveTrain.getLocalizer().setPoseEstimate(initPose);
         while (!isStopRequested() && !opModeIsActive()) {
-            identifiedLocation = detectionSystem.detect();
-            telemetry.addData("Detected Parking Location:", identifiedLocation);
+            //identifiedLocation = detectionSystem.detect();
+            //   telemetry.addData("Detected Parking Location:", identifiedLocation);
             telemetry.addLine("Initialization Ready");
             telemetry.update();
         }
 
         waitForStart();
-        driveTrain.followTrajectorySequenceAsync(preload);
-        detectionSystem.stop();
+        driveTrain.followTrajectorySequenceAsync(centerPreload);
+       // detectionSystem.stop();
 
         while (!isStopRequested()) {
             while (opModeIsActive()) {
                 driveTrain.update();
+
+
+               /*
+                d
 
 
                 liftSystem.controller.setPID(Constants.Kp, Constants.Ki, Constants.Kd);
@@ -144,6 +149,7 @@ public class Auto_RedRight extends LinearOpMode {
 
 
                 }
+                */
 
             }
         }
