@@ -28,8 +28,8 @@ public class Intake {
         sweeper.setDirection(DcMotor.Direction.REVERSE);
         intake.scaleRange(0, 0.23);
         initIdle();
-        boxSweeper.setPower(0);
-        intake.setPosition(0);
+        terminateBoxSweeper();
+        retractIntake();
     }
 
 //SWITCHED 1/13/24 MOTOR POSITIONS
