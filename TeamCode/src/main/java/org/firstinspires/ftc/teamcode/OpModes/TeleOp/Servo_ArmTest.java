@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -28,12 +30,17 @@ public class Servo_ArmTest extends LinearOpMode {
         if (isStopRequested()) return;
         while (!isStopRequested()) {
             while (opModeIsActive()) {
+
+                telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
                 switch (state) {
                     case "idle":
-                        setPosition(0, 1);
+                        leftPivot.setPosition(0);
+                        rightPivot.setPosition(1);
                         break;
                     case "score":
-                        setPosition(1, 0);
+                        leftPivot.setPosition(1);
+                        rightPivot.setPosition(0);
                         break;
                 }
 
@@ -49,8 +56,4 @@ public class Servo_ArmTest extends LinearOpMode {
 
     }
 
-    private static void setPosition(double left, double right) {
-        leftPivot.setPosition(left);
-        rightPivot.setPosition(right);
-    }
 }
