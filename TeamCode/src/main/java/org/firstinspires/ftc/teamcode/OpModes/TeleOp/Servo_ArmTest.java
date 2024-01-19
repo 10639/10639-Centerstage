@@ -11,8 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Servo_ArmTest extends LinearOpMode {
 
-    public static double min = 0;
-    public static double max = 1;
+    public static double min = 0, max = 0;
     public static String state = "idle";
     public static Servo leftPivot, rightPivot;
 
@@ -22,16 +21,16 @@ public class Servo_ArmTest extends LinearOpMode {
 
         leftPivot = hardwareMap.get(Servo.class, "leftPivot");
         rightPivot = hardwareMap.get(Servo.class, "rightPivot");
-
-        leftPivot.scaleRange(min, max);
-        rightPivot.scaleRange(min, max);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
 
         if (isStopRequested()) return;
         while (!isStopRequested()) {
             while (opModeIsActive()) {
 
-                telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+                leftPivot.scaleRange(min, max);
+                rightPivot.scaleRange(min, max);
+
 
                 switch (state) {
                     case "idle":
