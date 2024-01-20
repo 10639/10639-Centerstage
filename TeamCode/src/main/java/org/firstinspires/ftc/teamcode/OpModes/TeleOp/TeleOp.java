@@ -2,16 +2,22 @@ package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
+import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.arcrobotics.ftclib.controller.PIDController;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Arm;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Constants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "CenterStage_TeleOp")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TEST")
 public class TeleOp extends LinearOpMode {
 
     public SampleMecanumDrive driveTrain;
@@ -25,13 +31,12 @@ public class TeleOp extends LinearOpMode {
     public enum SpeedState {
         NORMAL(0.5),
         FAST(0.9);
-        final double multiplier; //Default
+        double multiplier = 0.5; //Default
 
         SpeedState(double value) {
             this.multiplier = value;
         }
     }
-
     SpeedState speedState;
 
     @Override
@@ -69,6 +74,12 @@ public class TeleOp extends LinearOpMode {
             while (opModeIsActive()) {
 
 
+                if(gamepad1.left_bumper) {
+                    speedState = SpeedState.NORMAL;
+                } else if(gamepad1.right_bumper) {
+                    speedState = SpeedState.FAST;
+                }
+
                 driveTrain.setWeightedDrivePower(
                         new Pose2d(
                                 -gamepad1.left_stick_y * speedState.multiplier,
@@ -80,12 +91,6 @@ public class TeleOp extends LinearOpMode {
                 armSystem.loop(gamepad2);
                 intakeSystem.loop(gamepad2);
 
-
-                if (gamepad1.left_bumper) {
-                    speedState = SpeedState.NORMAL;
-                } else if (gamepad1.right_bumper) {
-                    speedState = SpeedState.FAST;
-                }
 
                 if (gamepad1.square) {
                     if (target == Constants.LIFT_LEVEL_ZERO) {
