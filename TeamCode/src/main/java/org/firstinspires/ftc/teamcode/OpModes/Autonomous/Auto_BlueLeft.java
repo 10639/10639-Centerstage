@@ -105,12 +105,12 @@ public class Auto_BlueLeft extends LinearOpMode {
                 .lineToConstantHeading(midwayVector)
                 .strafeTo(leftVector)
                 .back(-3)
-                .turn(Math.toRadians(90))
                 .strafeTo(new Vector2d(13, 36))
+                .turn(Math.toRadians(90))
                 .lineToConstantHeading(scoringVector)
-                .strafeTo(new Vector2d(47, 42))
+                .strafeTo(new Vector2d(47, 28))
                 .waitSeconds(3)
-                .strafeTo(new Vector2d(47,28))
+                .strafeTo(parkingPose)
                 .lineToConstantHeading(finalPose)
                 .build();
 
@@ -121,8 +121,9 @@ public class Auto_BlueLeft extends LinearOpMode {
                 .turn(Math.toRadians(90))
                 .strafeTo(new Vector2d(35, 36))
                 .lineToConstantHeading(scoringVector)
-                .strafeTo(new Vector2d(47,55))
+                .strafeTo(new Vector2d(47, 42))
                 .waitSeconds(3)
+                .strafeTo(new Vector2d(47,55))
                 .strafeTo(parkingPose)
                 .lineToConstantHeading(finalPose)
                 .build();

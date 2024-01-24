@@ -87,8 +87,9 @@ public class Auto_BlueRight extends LinearOpMode {
 
         TrajectorySequence leftPreload = driveTrain.trajectorySequenceBuilder(initPose)
                 .lineToConstantHeading(midwayVector)
-                .strafeTo(rightVector)
+                .strafeTo(leftVector)
                 .back(3)
+                .lineToConstantHeading(new Vector2d(13, -36))
                 .turn(Math.toRadians(90))
                 .strafeTo(new Vector2d(35, -36))
                 .lineToConstantHeading(scoringVector)
