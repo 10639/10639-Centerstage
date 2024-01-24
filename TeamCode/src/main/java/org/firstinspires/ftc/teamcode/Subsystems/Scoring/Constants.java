@@ -10,9 +10,9 @@ public class Constants {
     public static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     //19.7498748746487
 
-    static final double FIRST_LEVEL = 10;
-    static final double SECOND_LEVEL = 20;
-    static final double THIRD_LEVEL = 26;
+    static final double FIRST_LEVEL = 12;
+    static final double SECOND_LEVEL = 17;
+    static final double THIRD_LEVEL = 20;
 
     public static final int LIFT_LEVEL_ZERO = 0;
     public static final int LIFT_FIRST_LEVEL = (int) (FIRST_LEVEL * COUNTS_PER_INCH);
@@ -20,10 +20,14 @@ public class Constants {
     public static final int LIFT_THIRD_LEVEL = (int) (THIRD_LEVEL * COUNTS_PER_INCH);
 
     //Proportional, Integral, Derivative gains.
-    public static final double Kp = 0.05, Ki = 0, Kd = 0.0001;
-    //Feedforward component -> Since we're doing this for a lift; we'll do a G value (gravity).
+    public static final double Kp = 0.1, Ki = 0, Kd = 0.00001;
+    //P -> Ability to Reach Target Position
+    //I -> Leave at 0
+    //D -> Dampener to counteract any oscillations
+    //F -> Ability to counteract gravity and maintain its position (going up, down, and in place)
+    // Feedforward component (F) -> Since we're doing this for a lift; we'll do a G value (gravity).
     //Refer to https://www.ctrlaltftc.com/feedforward-control#slide-gravity-feedforward
-    public static final double Kf = 0.1;
+    public static final double Kf = 0.12;
 
 
     /** ======= CONSTANTS FOR ARM  ======= **/

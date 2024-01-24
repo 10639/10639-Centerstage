@@ -17,16 +17,18 @@ import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Constants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TEST")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "CenterStage_TeleOp")
 public class TeleOp extends LinearOpMode {
 
     public SampleMecanumDrive driveTrain;
-    public PIDController controller;
+    private PIDController controller;
     public DcMotorEx leftSlide, rightSlide;
     public Arm armSystem;
     public Intake intakeSystem;
     public static int target = 0;
-    public static int previousTarget;
+    public static boolean rightSlideRest = true;
+    public static boolean scoreAllowed = false;
+    public static boolean tiltBox = false;
 
     public enum SpeedState {
         NORMAL(0.5),
@@ -37,6 +39,7 @@ public class TeleOp extends LinearOpMode {
             this.multiplier = value;
         }
     }
+
     SpeedState speedState;
 
     @Override
@@ -45,7 +48,6 @@ public class TeleOp extends LinearOpMode {
         armSystem = new Arm(hardwareMap);
         intakeSystem = new Intake(hardwareMap);
         controller = new PIDController(Constants.Kp, Constants.Ki, Constants.Kd);
-        controller.setPID(Constants.Kp, Constants.Ki, Constants.Kd);
 
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
@@ -61,11 +63,14 @@ public class TeleOp extends LinearOpMode {
         leftSlide.setDirection(DcMotor.Direction.FORWARD);
 
 
-        armSystem.init();
+        armSystem.init(); //Depowers
         intakeSystem.init();
 
 
         speedState = SpeedState.NORMAL;
+        rightSlideRest = true;
+        scoreAllowed = false;
+        tiltBox = false;
         target = 0;
 
 
@@ -91,41 +96,83 @@ public class TeleOp extends LinearOpMode {
                 armSystem.loop(gamepad2);
                 intakeSystem.loop(gamepad2);
 
-
                 if (gamepad1.square) {
-                    if (target == Constants.LIFT_LEVEL_ZERO) {
-                        previousTarget = 0;
-                    }
                     target = Constants.LIFT_FIRST_LEVEL;
                 } else if (gamepad1.triangle) {
-                    if (target == Constants.LIFT_LEVEL_ZERO) {
-                        previousTarget = 0;
-                    }
                     target = Constants.LIFT_SECOND_LEVEL;
                 } else if (gamepad1.circle) {
-                    if (target == Constants.LIFT_LEVEL_ZERO) {
-                        previousTarget = 0;
-                    }
                     target = Constants.LIFT_THIRD_LEVEL;
                 } else if (gamepad1.cross) {
-                    previousTarget = target;
+                    armSystem.armIdle();
                     target = Constants.LIFT_LEVEL_ZERO;
                 }
 
-                int state = leftSlide.getCurrentPosition();
-                double pid = controller.calculate(state, target);
+                controller.setPID(Constants.Kp, Constants.Ki, Constants.Kd);
+                int leftPosition = leftSlide.getCurrentPosition();
+                double pid = controller.calculate(leftPosition, target);
                 double power = pid + Constants.Kf;
+                if (pid < 0) { // Going down
+                    power = Math.max(power, -0.17);
+                    scoreAllowed = false;
+                } else { //Going up
+                    power = Math.min(power, 1); //Power Range 0 -> 1;
+                }
+                leftSlide.setPower(power);
+                rightSlide.setPower(power);
+                if(leftSlide.getCurrentPosition() > 15) {
+                    rightSlideRest = false;
+                    scoreAllowed = true;
+                }
+                if(pid < 0) {
+                    armSystem.armIdle();
+                }
+                if(scoreAllowed) {
+                    if(gamepad2.triangle) {
+                        tiltBox = true;
+                    }
+                    if(tiltBox) {
+                        armSystem.armScore();
+                    } else {
+                        armSystem.armIdle();
+                    }
 
-                leftSlide.setPower(power * 0.2);
-                rightSlide.setPower(power * 0.2);
+                }
 
+                if( (target == 0)  ) { //Ensure Lifts are Fully Down (Observation: Right Slide Mainly Issues)
+                    armSystem.armIdle();
+                    scoreAllowed = false;
+                    tiltBox = false;
+                    while( (rightSlide.getCurrentPosition() > 1 || rightSlide.getCurrentPosition() <= -1) && !rightSlideRest) {
+                        rightSlide.setPower( (Math.signum(rightSlide.getCurrentPosition() * -1) * 0.3) );
+                        if(rightSlide.getCurrentPosition() < 1 || rightSlide.getCurrentPosition() >= -1) {
+                            rightSlideRest = true;
+                            rightSlide.setPower(0);
+                            break;
+                        }
+                    }
+                    while(leftSlide.getCurrentPosition() > 0) {
+                        leftSlide.setPower(-0.3);
+                        if(leftSlide.getCurrentPosition() == 0) {
+                            leftSlide.setPower(0);
+                            break;
+                        }
+                    }
+                }
 
-                telemetry.addData("Slides Target", target);
-                telemetry.addData("rightSlide Position", rightSlide.getCurrentPosition());
-                telemetry.addData("leftSlide Position", leftSlide.getCurrentPosition());
-                telemetry.addData("Drivetrain Speed", speedState);
+                if(rightSlideRest) {
+                    armSystem.dePower();
+                    scoreAllowed = false;
+                    tiltBox = false;
+                }
+
+                telemetry.addData("leftPos", leftPosition);
+                telemetry.addData("rightPos", rightSlide.getCurrentPosition());
+                telemetry.addData("target", target);
+                telemetry.addData("Calculated PID", pid);
+                telemetry.addData("Slides Power", power);
+                telemetry.addData("Slide Direction:", pid < 0 ? "Down" : "Up");
+                telemetry.addData("Right Slide @ Rest", rightSlideRest);
                 telemetry.update();
-
             }
         }
     }

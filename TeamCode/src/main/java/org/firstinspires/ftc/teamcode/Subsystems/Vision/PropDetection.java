@@ -30,6 +30,13 @@ public class PropDetection extends OpenCvPipeline {
     Mat mat = new Mat(), mat1 = new Mat();
     Rect leftRect = new Rect(140, 270, 200, 100); // define our regions of interest (where the algorithm is focusing on) as rectangles
     Rect midRect = new Rect(570, 260, 530, 100);
+    Scalar color = isRed ? new Scalar(0, 0, 255) : new Scalar(255, 0, 0); // Blue
+    Scalar lowColorBound = new Scalar(100, 40, 40); // set lower and upper bounds for the color we want to recognize (blue in this case)
+    Scalar highColorBound = new Scalar(125, 500, 500);
+    Scalar lowColorBound_Range = new Scalar(0, 0, 0); //Place Holders for Red
+    Scalar highColorBound_Range = new Scalar(0, 0, 0); // Place Holders for Red
+    Mat hold = new Mat();
+    Mat cone = new Mat();
     double PERCENT_THRESHOLD = Constants.CONFIDENCE; // define our threshold
     private Location location;
 
@@ -37,13 +44,6 @@ public class PropDetection extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
         isRed = !Blue;
-        Scalar color = isRed ? new Scalar(0, 0, 255) : new Scalar(255, 0, 0); // Blue
-        Scalar lowColorBound = new Scalar(100, 40, 40); // set lower and upper bounds for the color we want to recognize (blue in this case)
-        Scalar highColorBound = new Scalar(125, 500, 500);
-        Scalar lowColorBound_Range = new Scalar(0, 0, 0); //Place Holders for Red
-        Scalar highColorBound_Range = new Scalar(0, 0, 0); // Place Holders for Red
-        Mat hold = new Mat();
-        Mat cone = new Mat();
 
         if(isRed) {
             lowColorBound = new Scalar(0, 60, 60);

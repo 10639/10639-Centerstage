@@ -11,8 +11,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Servo_ArmTest extends LinearOpMode {
 
-    public static double min = 0, max = 0;
-    public static String state = "idle";
+    public static double min = 0, max = 1;
+    public static String state = "scoring";
     public static Servo leftPivot, rightPivot;
 
 
@@ -28,20 +28,11 @@ public class Servo_ArmTest extends LinearOpMode {
         while (!isStopRequested()) {
             while (opModeIsActive()) {
 
-                leftPivot.scaleRange(min, max);
-                rightPivot.scaleRange(min, max);
+                    leftPivot.scaleRange(min, max);
+                    rightPivot.scaleRange(min, max);
+                    leftPivot.setPosition(0);
+                    rightPivot.setPosition(1);
 
-
-                switch (state) {
-                    case "idle":
-                        leftPivot.setPosition(0);
-                        rightPivot.setPosition(1);
-                        break;
-                    case "score":
-                        leftPivot.setPosition(1);
-                        rightPivot.setPosition(0);
-                        break;
-                }
 
                 telemetry.addData("State", state);
                 telemetry.addData("Min Position", min);

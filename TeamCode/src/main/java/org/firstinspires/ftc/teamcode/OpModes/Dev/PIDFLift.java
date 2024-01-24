@@ -6,61 +6,94 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+
+import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Arm;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Constants;
 
 @Config
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "PIDFLift_Test")
-@Disabled
-public class PIDFLift extends LinearOpMode {
+public class PIDFLift extends OpMode {
 
-    public PIDController controller;
+    private  PIDController controller;
     public DcMotorEx leftSlide, rightSlide;
+    public Arm armSystem;
     public static int target = 0;
-    public static double p = 0, i = 0, d =0;
-    public static double f = 0;
+    public static double p = 0.1, i = 0, d =0.00001;
+    //Possible Value for P: 0.1;
+    //Possible Value for D: 0.00001;
+    public static double f = 0.12; //Possible Value 0.12;
+    public static boolean rightSlideRest = true;
 
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void init() {
         controller = new PIDController(p, i, d);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
-        rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
 
-        leftSlide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftSlide.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        leftSlide.setDirection(DcMotor.Direction.REVERSE);
+        rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
+        leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
+        armSystem = new Arm(hardwareMap);
+        armSystem.init();
 
         rightSlide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightSlide.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         rightSlide.setDirection(DcMotor.Direction.REVERSE);
 
-
-        if (isStopRequested()) return;
-        while (!isStopRequested()) {
-            while (opModeIsActive()) {
-
-
-
-                controller.setPID(p, i, d);
-                int state = rightSlide.getCurrentPosition();
-                double pid = controller.calculate(state, target);
-                double power = pid + f;
-               // liftMotor.setPower(state < target ? power : (0.2 * pid) + Constants.Kf);
-                leftSlide.setPower(power * 0.8);
-                rightSlide.setPower(power * 0.8);
-
-                telemetry.addData("Pos", state);
-                telemetry.addData("Target", target);
-                telemetry.addData("power", power);
-                telemetry.update();
-            }
-        }
+        leftSlide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftSlide.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        leftSlide.setDirection(DcMotor.Direction.FORWARD);
 
     }
 
+    @Override
+    public void loop() {
+
+        controller.setPID(p, i, d);
+        int leftPosition = leftSlide.getCurrentPosition();
+        double pid = controller.calculate(leftPosition, target);
+        double power = pid + f;
+        if (pid < 0) { // Going down
+            power = Math.max(power, -0.17);
+        } else { //Going up
+            power = Math.min(power, 1); //Power Range 0 -> 1;
+            if(target > 0) {
+                rightSlideRest = false;
+            }
+        }
+        leftSlide.setPower(power);
+        rightSlide.setPower(power);
+
+        if( (target == 0)  ) {
+               while(rightSlide.getCurrentPosition() > 0 && !rightSlideRest) {
+                   rightSlide.setPower(-0.3);
+                   if(rightSlide.getCurrentPosition() == 0) {
+                       rightSlideRest = true;
+                       rightSlide.setPower(0);
+                       break;
+                   }
+            }
+               while(leftSlide.getCurrentPosition() > 0) {
+                   leftSlide.setPower(-0.3);
+                   if(leftSlide.getCurrentPosition() == 0) {
+                       leftSlide.setPower(0);
+                       break;
+                   }
+               }
+        }
+
+        telemetry.addData("leftPos", leftPosition);
+        telemetry.addData("rightPos", rightSlide.getCurrentPosition());
+        telemetry.addData("target", target);
+        telemetry.addData("Calculated PID", pid);
+        telemetry.addData("Slides Power", power);
+        telemetry.addData("Slide Direction:", pid < 0 ? "Down" : "Up");
+        telemetry.addData("Right Slide @ Rest", rightSlideRest);
+        telemetry.update();
+
+    }
 }

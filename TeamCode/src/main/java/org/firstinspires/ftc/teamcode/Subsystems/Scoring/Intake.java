@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import kotlin.coroutines.jvm.internal.Boxing;
+
 public class Intake {
 
     private final HardwareMap hardwareMap;
@@ -26,7 +28,7 @@ public class Intake {
         sweeper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         sweeper.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         sweeper.setDirection(DcMotor.Direction.REVERSE);
-        intake.scaleRange(0, 0.23);
+        intake.scaleRange(0, 0.65);
         initIdle();
         terminateBoxSweeper();
         retractIntake();
