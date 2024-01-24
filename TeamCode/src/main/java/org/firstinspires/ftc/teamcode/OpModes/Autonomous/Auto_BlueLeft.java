@@ -101,7 +101,7 @@ public class Auto_BlueLeft extends LinearOpMode {
                 .lineToConstantHeading(finalPose)
                 .build();
 
-        TrajectorySequence leftPreload = driveTrain.trajectorySequenceBuilder(initPose)
+        TrajectorySequence rightPreload = driveTrain.trajectorySequenceBuilder(initPose)
                 .lineToConstantHeading(midwayVector)
                 .strafeTo(leftVector)
                 .back(-3)
@@ -110,18 +110,18 @@ public class Auto_BlueLeft extends LinearOpMode {
                 .lineToConstantHeading(scoringVector)
                 .strafeTo(new Vector2d(47, 42))
                 .waitSeconds(3)
-                .strafeTo(new Vector2d(47,56))
+                .strafeTo(new Vector2d(47,28))
                 .lineToConstantHeading(finalPose)
                 .build();
 
-        TrajectorySequence rightPreload = driveTrain.trajectorySequenceBuilder(initPose)
+        TrajectorySequence leftPreload = driveTrain.trajectorySequenceBuilder(initPose)
                 .lineToConstantHeading(midwayVector)
                 .strafeTo(rightVector)
                 .back(-3)
                 .turn(Math.toRadians(90))
                 .strafeTo(new Vector2d(35, 36))
                 .lineToConstantHeading(scoringVector)
-                .strafeTo(new Vector2d(47,28))
+                .strafeTo(new Vector2d(47,55))
                 .waitSeconds(3)
                 .strafeTo(parkingPose)
                 .lineToConstantHeading(finalPose)
