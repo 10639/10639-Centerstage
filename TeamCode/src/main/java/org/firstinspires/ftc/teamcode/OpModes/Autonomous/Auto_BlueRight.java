@@ -25,9 +25,15 @@ public class Auto_BlueRight extends LinearOpMode {
     //  Detection detectionSystem;
 
 
-    Pose2d initPose;
+
     Vector2d leftLocation, centerLocation, rightLocation;
+    Pose2d initPose;
+    Vector2d midwayVector;
+    Vector2d scoringVector;
+    Vector2d leftVector;
+    Vector2d rightVector;
     Vector2d finalPose;
+    Vector2d parkingPose;
     // Vector2d parkingLocationOne, parkingLocationTwo, parkingLocationThree;
 
     public enum TrajectoryState {PRELOAD, CS, CS_TO_MJ, PARK, IDLE}
@@ -57,18 +63,53 @@ public class Auto_BlueRight extends LinearOpMode {
 
 
         // initPose = new Pose2d(-35, -58, Math.toRadians(270));
-        initPose = new Pose2d(-35, 58, Math.toRadians(90));
-        finalPose = new Vector2d(-60, 56);
+        initPose = new Pose2d(13, -58, Math.toRadians(-270));
+        midwayVector = new Vector2d(13, -33);
+        scoringVector = new Vector2d(47, -36);
+        leftVector = new Vector2d(0,-33);
+        rightVector = new Vector2d(22,-33);
+        parkingPose = new Vector2d(47,-56);
+        finalPose = new Vector2d(60, -56);
         //    midWayPose = new Vector2d(-35, -10);
         //  dropConePose = new Vector2d(-29, 28);
 
 
 
         TrajectorySequence centerPreload = driveTrain.trajectorySequenceBuilder(initPose)
-                .lineToConstantHeading(new Vector2d(-35,30))
-                .lineToConstantHeading(new Vector2d(-35, 58))
+                .lineToConstantHeading(midwayVector)
+                .back(3)
+                .turn(Math.toRadians(90))
+                .lineToConstantHeading(scoringVector)
+                .waitSeconds(3)
+                .strafeTo(parkingPose)
+                .lineToConstantHeading(finalPose)
                 .build();
 
+        TrajectorySequence leftPreload = driveTrain.trajectorySequenceBuilder(initPose)
+                .lineToConstantHeading(midwayVector)
+                .strafeTo(rightVector)
+                .back(3)
+                .turn(Math.toRadians(90))
+                .strafeTo(new Vector2d(35, -36))
+                .lineToConstantHeading(scoringVector)
+                .strafeTo(new Vector2d(47,-28))
+                .waitSeconds(3)
+                .strafeTo(parkingPose)
+                .lineToConstantHeading(finalPose)
+                .build();
+
+        TrajectorySequence rightPreload = driveTrain.trajectorySequenceBuilder(initPose)
+                .lineToConstantHeading(midwayVector)
+                .strafeTo(rightVector)
+                .back(3)
+                .turn(Math.toRadians(90))
+                .strafeTo(new Vector2d(35, -36))
+                .lineToConstantHeading(scoringVector)
+                .strafeTo(new Vector2d(47,-42))
+                .waitSeconds(3)
+                .strafeTo(parkingPose)
+                .lineToConstantHeading(finalPose)
+                .build();
 
         driveTrain.getLocalizer().setPoseEstimate(initPose);
         while (!isStopRequested() && !opModeIsActive()) {
