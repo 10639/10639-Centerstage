@@ -56,29 +56,24 @@ public class Intake {
 
     public void loop(Gamepad gamepad) {
 
-      if(gamepad.dpad_up) { //Extend Intake + Spin Intake Pixels + Sweep inside Box
+      if(gamepad.right_bumper) { //Extend Intake + Spin Intake Pixels + Sweep inside Box
           extendIntake();
           Sweep();
           boxSweep();
-      } else if(gamepad.dpad_down) { //Reverse Intake Spin + Reverse outside Box + Retracts Intake
+      } else if(gamepad.left_bumper) { //Reverse Intake Spin + Reverse outside Box + Retracts Intake
+          retractIntake();
+      } else if(gamepad.dpad_left) { //Reverses Box Spin
+          boxReverseSweep();
+      } else if(gamepad.dpad_down) { //Spin everything out
           reverseSweep();
           boxReverseSweep();
           retractIntake();
-      } else if(gamepad.left_stick_button) { //Terminate Intake Spin
+      } else if(gamepad.dpad_right) {
+          reverseSweep();
+      }  else if(gamepad.left_stick_y > 0 || gamepad.left_stick_y < 0) { //Terminate Intake Spin
           terminateSweep();
-      } else if(gamepad.right_stick_button) { //Terminates Box spin
           terminateBoxSweeper();
-      } else if(gamepad.dpad_left) { //Reverses Box Spin
-          boxReverseSweep();
-      } else if(gamepad.left_bumper) { //Default V4b Position
-          retractIntake();
-      } else if(gamepad.right_bumper) { //Outer V4b Position
-          extendIntake();
       }
-
-
-        //      } else if(gamepad.dpad_right) { //Spins Pixels in
-//          boxSweeper.setPower(-1);
 
     }
 }

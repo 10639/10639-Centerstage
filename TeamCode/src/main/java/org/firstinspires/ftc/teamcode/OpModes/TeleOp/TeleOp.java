@@ -127,7 +127,7 @@ public class TeleOp extends LinearOpMode {
                     armSystem.armIdle();
                 }
                 if(scoreAllowed) {
-                    if(gamepad2.triangle) {
+                    if(gamepad2.cross) {
                         tiltBox = true;
                     }
                     if(tiltBox) {

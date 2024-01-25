@@ -82,7 +82,7 @@ public class BluePipeline extends OpenCvPipeline {
         return location;
     }
 
-    public void stop(OpenCvCamera camera) {
+    public static void stop(OpenCvCamera camera) {
         camera.stopStreaming();
     }
 }

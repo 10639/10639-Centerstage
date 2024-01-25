@@ -44,10 +44,8 @@ public class Arm {
 
     public void loop(Gamepad gamepad) {
 
-         if(gamepad.triangle) {
+         if(gamepad.cross) {
              armScore();
-         } else if(gamepad.cross) {
-             armIdle();
          }
 
     }
