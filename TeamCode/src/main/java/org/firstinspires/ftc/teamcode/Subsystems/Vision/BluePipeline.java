@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems.Vision;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Constants;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -21,7 +22,7 @@ public class BluePipeline extends OpenCvPipeline {
     Rect leftRect = new Rect(450, 295, 200, 250); // define our regions of interest (where the algorithm is focusing on) as rectangles
     Rect midRect = new Rect(745, 295, 350, 200);
     //    Rect rightRect = new Rect(1080, 230, 200, 117);
-    final double PERCENT_THRESHOLD = 0.10; // define our threshold
+    final double PERCENT_THRESHOLD = Constants.CONFIDENCE; // define our threshold
     private int finalAnswer;
     Scalar blue = new Scalar(0, 0, 255); // define what the color of the rectangle outline is that appears on the output (blue)
 

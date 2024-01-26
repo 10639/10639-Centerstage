@@ -5,12 +5,13 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.arcrobotics.ftclib.controller.PIDController;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Arm;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Constants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Box;
+
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "CenterStage_TeleOp")
 public class TeleOp extends LinearOpMode {
 
@@ -19,6 +20,8 @@ public class TeleOp extends LinearOpMode {
     public DcMotorEx leftSlide, rightSlide;
     public Arm armSystem;
     public Intake intakeSystem;
+    public Box pixelDetector;
+
     public static int target = 0;
     public static boolean rightSlideRest = true;
     public static boolean scoreAllowed = false;
@@ -41,6 +44,8 @@ public class TeleOp extends LinearOpMode {
         driveTrain = new SampleMecanumDrive(hardwareMap);
         armSystem = new Arm(hardwareMap);
         intakeSystem = new Intake(hardwareMap);
+        pixelDetector = new Box(hardwareMap);
+
         controller = new PIDController(Constants.Kp, Constants.Ki, Constants.Kd);
 
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
@@ -59,6 +64,7 @@ public class TeleOp extends LinearOpMode {
 
         armSystem.init(); //Depowers
         intakeSystem.init();
+        pixelDetector.init();
 
 
         speedState = SpeedState.NORMAL;
@@ -166,6 +172,7 @@ public class TeleOp extends LinearOpMode {
                 telemetry.addData("Slides Power", power);
                 telemetry.addData("Slide Direction:", pid < 0 ? "Down" : "Up");
                 telemetry.addData("Right Slide @ Rest", rightSlideRest);
+                telemetry.addData("Pixel Count", pixelDetector.getCount()) ;
                 telemetry.update();
             }
         }

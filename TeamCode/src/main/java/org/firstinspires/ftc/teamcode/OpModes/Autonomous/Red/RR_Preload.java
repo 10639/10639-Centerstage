@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Arm;
+import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Box;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Intake;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -22,8 +23,9 @@ public class RR_Preload extends LinearOpMode {
 
     public SampleMecanumDrive driveTrain;
 
-    Arm armSystem;
-    Intake intakeSystem;
+    public Arm armSystem;
+    public Intake intakeSystem;
+    public Box pixelDetector;
     RedPipeline pipeline;
     OpenCvWebcam webcam;
 
@@ -42,6 +44,7 @@ public class RR_Preload extends LinearOpMode {
         driveTrain = new SampleMecanumDrive(hardwareMap);
         armSystem = new Arm(hardwareMap);
         intakeSystem = new Intake(hardwareMap);
+        pixelDetector = new Box(hardwareMap);
         RedPipeline.Location location = RedPipeline.Location.RIGHT;
 
         armSystem.init(); //De-Powers
@@ -177,6 +180,7 @@ public class RR_Preload extends LinearOpMode {
         while (!isStopRequested()) {
             while (opModeIsActive()) {
                 driveTrain.update();
+                telemetry.addData("Pixel Count", pixelDetector.getCount());
             }
 
         }

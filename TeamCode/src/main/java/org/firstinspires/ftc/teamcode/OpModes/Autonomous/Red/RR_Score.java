@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Arm;
+import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Box;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Constants;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.BluePipeline;
@@ -30,8 +31,9 @@ public class RR_Score extends LinearOpMode {
     public DcMotorEx leftSlide, rightSlide;
     private PIDController controller;
 
-    Arm armSystem;
-    Intake intakeSystem;
+    public Arm armSystem;
+    public Intake intakeSystem;
+    public Box pixelDetector;
     RedPipeline pipeline;
     OpenCvWebcam webcam;
 
@@ -60,6 +62,7 @@ public class RR_Score extends LinearOpMode {
         driveTrain = new SampleMecanumDrive(hardwareMap);
         armSystem = new Arm(hardwareMap);
         intakeSystem = new Intake(hardwareMap);
+        pixelDetector = new Box(hardwareMap);
         Lift lift = new Lift(hardwareMap);
         controller = new PIDController(Constants.Kp, Constants.Ki, Constants.Kd);
         RedPipeline.Location location = RedPipeline.Location.RIGHT;
@@ -236,6 +239,7 @@ public class RR_Score extends LinearOpMode {
                 telemetry.addData("Autonomous State", currentState);
                 telemetry.addData("Slides Target", target);
                 telemetry.addData("Right Slide @ Rest", rightSlideRest);
+                telemetry.addData("Pixel Count", pixelDetector.getCount());
 
                 telemetry.update();
                 driveTrain.update(); //Update deadwheel encoder counts

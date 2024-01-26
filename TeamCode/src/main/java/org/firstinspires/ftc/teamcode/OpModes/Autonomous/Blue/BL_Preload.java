@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Arm;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Box;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -16,13 +17,14 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.BluePipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+
 @Autonomous(name = "🟦 Left Preload", preselectTeleOp = "CenterStage_TeleOp")
 public class BL_Preload extends LinearOpMode {
 
     public SampleMecanumDrive driveTrain;
-
-    Arm armSystem;
-    Intake intakeSystem;
+    public Arm armSystem;
+    public Intake intakeSystem;
+    public Box pixelDetector;
     BluePipeline pipeline;
     OpenCvWebcam webcam;
 
@@ -41,10 +43,12 @@ public class BL_Preload extends LinearOpMode {
         driveTrain = new SampleMecanumDrive(hardwareMap);
         armSystem = new Arm(hardwareMap);
         intakeSystem = new Intake(hardwareMap);
+        pixelDetector = new Box(hardwareMap);
         BluePipeline.Location location = BluePipeline.Location.RIGHT;
 
         armSystem.init(); //De-Powers
         intakeSystem.init();
+        pixelDetector.init();
 
         int cameraMonitorViewId = hardwareMap.appContext
                 .getResources().getIdentifier(
@@ -174,6 +178,7 @@ public class BL_Preload extends LinearOpMode {
         while (!isStopRequested()) {
             while (opModeIsActive()) {
                 driveTrain.update();
+                telemetry.addData("Pixel Count", pixelDetector.getCount());
             }
 
         }
