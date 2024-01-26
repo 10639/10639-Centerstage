@@ -107,7 +107,7 @@ public class BL_Score extends LinearOpMode {
         parkingPose = new Vector2d(47,60);
         finalPose = new Vector2d(60, 60);
         double backwardsDistance = 3;
-        double angle = 115;
+        double turnAngle = 115;
 
 
         TrajectorySequence midWayPos = driveTrain.trajectorySequenceBuilder(initPose)
@@ -120,7 +120,7 @@ public class BL_Score extends LinearOpMode {
                 .setReversed(true)
                 .lineToConstantHeading(midwayVector)
                 .setReversed(false)
-                .turn(Math.toRadians(angle))
+                .turn(Math.toRadians(turnAngle))
                 .lineToConstantHeading(scoringVector)
                 .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> { //-0.5 Seconds BEFORE heading to Backdrop
                     target = Constants.LIFT_FIRST_LEVEL;
@@ -148,7 +148,7 @@ public class BL_Score extends LinearOpMode {
                 .strafeTo(rightVector)
                 .lineToConstantHeading(new Vector2d(rightVector.getX(), rightVector.getY() + backwardsDistance))
                 .strafeTo(new Vector2d(midwayVector.getX(), rightVector.getY() + backwardsDistance))
-                .turn(Math.toRadians(angle))
+                .turn(Math.toRadians(turnAngle))
                 .lineToConstantHeading(new Vector2d(scoringVector.getX(), rightVector.getY() + backwardsDistance))
                 .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> { //-0.5 Seconds BEFORE heading to Backdrop
                     target = Constants.LIFT_FIRST_LEVEL;
@@ -174,7 +174,7 @@ public class BL_Score extends LinearOpMode {
                 .lineToConstantHeading(midwayVector)
                 .strafeTo(leftVector)
                 .lineToConstantHeading(new Vector2d(leftVector.getX(), leftVector.getY() + backwardsDistance))
-                .turn(Math.toRadians(angle))
+                .turn(Math.toRadians(turnAngle))
                 .lineToConstantHeading(new Vector2d(scoringVector.getX(), leftVector.getY() + backwardsDistance))
                 .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> { //-0.5 Seconds BEFORE heading to Backdrop
                     target = Constants.LIFT_FIRST_LEVEL;

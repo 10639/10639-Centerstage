@@ -86,7 +86,7 @@ public class BL_Preload extends LinearOpMode {
         parkingPose = new Vector2d(47,60);
         finalPose = new Vector2d(60, 60);
         double backwardsDistance = 3;
-        double angle = 115;
+        double turnAngle = 115;
 
 
         TrajectorySequence centerPreload = driveTrain.trajectorySequenceBuilder(initPose)
@@ -94,7 +94,7 @@ public class BL_Preload extends LinearOpMode {
                 .setReversed(true)
                 .lineToConstantHeading(midwayVector)
                 .setReversed(false)
-                .turn(Math.toRadians(angle))
+                .turn(Math.toRadians(turnAngle))
                 .lineToConstantHeading(scoringVector)
                 .strafeTo(parkingPose)
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { //0.5 Seconds after Strafing
@@ -116,7 +116,7 @@ public class BL_Preload extends LinearOpMode {
                 .strafeTo(rightVector)
                 .lineToConstantHeading(new Vector2d(rightVector.getX(), rightVector.getY() + backwardsDistance))
                 .strafeTo(new Vector2d(midwayVector.getX(), rightVector.getY() + backwardsDistance))
-                .turn(Math.toRadians(angle))
+                .turn(Math.toRadians(turnAngle))
                 .lineToConstantHeading(new Vector2d(scoringVector.getX(), rightVector.getY() + backwardsDistance))
                 .strafeTo(parkingPose)
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { //0.5 Seconds after Strafing
@@ -137,7 +137,7 @@ public class BL_Preload extends LinearOpMode {
                 .lineToConstantHeading(midwayVector)
                 .strafeTo(leftVector)
                 .lineToConstantHeading(new Vector2d(leftVector.getX(), leftVector.getY() + backwardsDistance))
-                .turn(Math.toRadians(angle))
+                .turn(Math.toRadians(turnAngle))
                 .lineToConstantHeading(new Vector2d(scoringVector.getX(), leftVector.getY() + backwardsDistance))
                 .strafeTo(parkingPose)
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { //0.5 Seconds after Strafing
