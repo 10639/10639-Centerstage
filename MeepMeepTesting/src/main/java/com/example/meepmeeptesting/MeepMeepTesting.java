@@ -21,18 +21,20 @@ public class MeepMeepTesting {
         Vector2d rightVector;
         Vector2d finalPose;
         Vector2d parkingPose;
-
+        Vector2d centerVector;
 
         initPose = new Pose2d(13, 58, Math.toRadians(-270));
-        midwayVector = new Vector2d(13, 33);
-        scoringVector = new Vector2d(47, 36);
-        leftVector = new Vector2d(0,33);
-        rightVector = new Vector2d(22,33);
-        parkingPose = new Vector2d(47,56);
-        finalPose = new Vector2d(60, 56);
-
+        midwayVector = new Vector2d(13, 35);
+        leftVector = new Vector2d(22,35);
+        rightVector = new Vector2d(0, 35);
+        centerVector = new Vector2d(13, 30);
+        scoringVector = new Vector2d(47, 35);
+        parkingPose = new Vector2d(47,60);
+        finalPose = new Vector2d(60, 60);
+        double backwardsDistance = 3;
         MeepMeep meepMeep = new MeepMeep(800);
 
+        Vector2d finalCenterVector = centerVector;
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(30, 30, Math.toRadians(180), Math.toRadians(180), 14.1)
@@ -40,15 +42,11 @@ public class MeepMeepTesting {
                         drive.trajectorySequenceBuilder(initPose)
                                 .lineToConstantHeading(midwayVector)
                                 .strafeTo(rightVector)
-                                .back(-3)
+                                .lineToConstantHeading(new Vector2d(rightVector.getX(), rightVector.getY() + backwardsDistance))
+                                .strafeTo(new Vector2d(midwayVector.getX(), rightVector.getY() + backwardsDistance))
                                 .turn(Math.toRadians(90))
-                                .strafeTo(new Vector2d(35, 36))
-                                .lineToConstantHeading(scoringVector)
-                                .strafeTo(new Vector2d(47, 42))
-                                .waitSeconds(3)
-                                .strafeTo(new Vector2d(47,55))
+                                .lineToConstantHeading(new Vector2d(scoringVector.getX(), rightVector.getY() + backwardsDistance))
                                 .strafeTo(parkingPose)
-                                .lineToConstantHeading(finalPose)
                                 .build()
 //                                .lineToConstantHeading(midwayVector)
 //                                .strafeTo(rightVector)
