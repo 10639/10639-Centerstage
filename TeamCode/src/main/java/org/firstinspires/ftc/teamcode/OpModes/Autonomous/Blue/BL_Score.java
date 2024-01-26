@@ -22,12 +22,12 @@ import org.firstinspires.ftc.teamcode.Subsystems.Vision.BluePipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 
-@Autonomous(name = "BlueLeft_Score", preselectTeleOp = "CenterStage_TeleOp")
+@Autonomous(name = "🟦 Left Backdrop", preselectTeleOp = "CenterStage_TeleOp")
 public class BL_Score extends LinearOpMode {
 
     public SampleMecanumDrive driveTrain;
     public DcMotorEx leftSlide, rightSlide;
-    public PIDController controller;
+    private PIDController controller;
 
     Arm armSystem;
     Intake intakeSystem;
@@ -65,7 +65,7 @@ public class BL_Score extends LinearOpMode {
         BluePipeline.Location location = BluePipeline.Location.RIGHT;
 
 
-        armSystem.init(); //Depowers
+        armSystem.init(); ///De-Powers
         intakeSystem.init();
 
         rightSlideRest = true;

@@ -17,7 +17,6 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class VisionTest_Red extends LinearOpMode {
 
     public SampleMecanumDrive driveTrain;
-    public PIDController controller;
 
     @Override
     public void runOpMode() throws InterruptedException {

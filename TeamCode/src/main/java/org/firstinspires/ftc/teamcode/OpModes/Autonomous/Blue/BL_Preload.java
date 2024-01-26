@@ -2,15 +2,11 @@ package org.firstinspires.ftc.teamcode.OpModes.Autonomous.Blue;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Arm;
-import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Constants;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Intake;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -20,13 +16,10 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.BluePipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-
-@Autonomous(name = "BlueLeft_Preload", preselectTeleOp = "CenterStage_TeleOp")
+@Autonomous(name = "🟦 Left Preload", preselectTeleOp = "CenterStage_TeleOp")
 public class BL_Preload extends LinearOpMode {
 
     public SampleMecanumDrive driveTrain;
-    public DcMotorEx leftSlide, rightSlide;
-    public PIDController controller;
 
     Arm armSystem;
     Intake intakeSystem;
@@ -50,7 +43,7 @@ public class BL_Preload extends LinearOpMode {
         intakeSystem = new Intake(hardwareMap);
         BluePipeline.Location location = BluePipeline.Location.RIGHT;
 
-        armSystem.init(); //Depowers
+        armSystem.init(); //De-Powers
         intakeSystem.init();
 
         int cameraMonitorViewId = hardwareMap.appContext

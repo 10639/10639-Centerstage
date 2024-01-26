@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.OpModes.Autonomous.Dev;
 
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -17,7 +16,6 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class VisionTest_Blue extends LinearOpMode {
 
     public SampleMecanumDrive driveTrain;
-    public PIDController controller;
 
     @Override
     public void runOpMode() throws InterruptedException {

@@ -2,14 +2,9 @@ package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
-import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.arcrobotics.ftclib.controller.PIDController;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Arm;
@@ -79,9 +74,9 @@ public class TeleOp extends LinearOpMode {
             while (opModeIsActive()) {
 
 
-                if(gamepad1.left_bumper) {
+                if (gamepad1.left_bumper) {
                     speedState = SpeedState.NORMAL;
-                } else if(gamepad1.right_bumper) {
+                } else if (gamepad1.right_bumper) {
                     speedState = SpeedState.FAST;
                 }
 
@@ -119,18 +114,18 @@ public class TeleOp extends LinearOpMode {
                 }
                 leftSlide.setPower(power);
                 rightSlide.setPower(power);
-                if(leftSlide.getCurrentPosition() > 15) {
+                if (leftSlide.getCurrentPosition() > 15) {
                     rightSlideRest = false;
                     scoreAllowed = true;
                 }
-                if(pid < 0) {
+                if (pid < 0) {
                     armSystem.armIdle();
                 }
-                if(scoreAllowed) {
-                    if(gamepad2.cross) {
+                if (scoreAllowed) {
+                    if (gamepad2.cross) {
                         tiltBox = true;
                     }
-                    if(tiltBox) {
+                    if (tiltBox) {
                         armSystem.armScore();
                     } else {
                         armSystem.armIdle();
@@ -138,28 +133,28 @@ public class TeleOp extends LinearOpMode {
 
                 }
 
-                if( (target == 0)  ) { //Ensure Lifts are Fully Down (Observation: Right Slide Mainly Issues)
+                if ((target == 0)) { //Ensure Lifts are Fully Down (Observation: Right Slide Mainly Issues)
                     armSystem.armIdle();
                     scoreAllowed = false;
                     tiltBox = false;
-                    while( (rightSlide.getCurrentPosition() > 1 || rightSlide.getCurrentPosition() <= -1) && !rightSlideRest) {
-                        rightSlide.setPower( (Math.signum(rightSlide.getCurrentPosition() * -1) * 0.3) );
-                        if(rightSlide.getCurrentPosition() < 1 || rightSlide.getCurrentPosition() >= -1) {
+                    while ((rightSlide.getCurrentPosition() > 1 || rightSlide.getCurrentPosition() <= -1) && !rightSlideRest) {
+                        rightSlide.setPower((Math.signum(rightSlide.getCurrentPosition() * -1) * 0.3));
+                        if (rightSlide.getCurrentPosition() < 1 || rightSlide.getCurrentPosition() >= -1) {
                             rightSlideRest = true;
                             rightSlide.setPower(0);
                             break;
                         }
                     }
-                    while(leftSlide.getCurrentPosition() > 0) {
+                    while (leftSlide.getCurrentPosition() > 0) {
                         leftSlide.setPower(-0.3);
-                        if(leftSlide.getCurrentPosition() == 0) {
+                        if (leftSlide.getCurrentPosition() == 0) {
                             leftSlide.setPower(0);
                             break;
                         }
                     }
                 }
 
-                if(rightSlideRest) {
+                if (rightSlideRest) {
                     armSystem.dePower();
                     scoreAllowed = false;
                     tiltBox = false;
@@ -177,5 +172,3 @@ public class TeleOp extends LinearOpMode {
         }
     }
 }
-
-

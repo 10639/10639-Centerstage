@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.OpModes.Autonomous.Blue.BL_Score;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Arm;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Constants;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Intake;
@@ -24,12 +23,12 @@ import org.firstinspires.ftc.teamcode.Subsystems.Vision.RedPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 
-@Autonomous(name = "RedRight_Preload", preselectTeleOp = "CenterStage_TeleOp")
+@Autonomous(name = "🟥 Right Backdrop", preselectTeleOp = "CenterStage_TeleOp")
 public class RR_Score extends LinearOpMode {
 
     public SampleMecanumDrive driveTrain;
     public DcMotorEx leftSlide, rightSlide;
-    public PIDController controller;
+    private PIDController controller;
 
     Arm armSystem;
     Intake intakeSystem;
@@ -66,7 +65,7 @@ public class RR_Score extends LinearOpMode {
         RedPipeline.Location location = RedPipeline.Location.RIGHT;
 
 
-        armSystem.init(); //Depowers
+        armSystem.init(); //De-Powers
         intakeSystem.init();
 
         rightSlideRest = true;
