@@ -31,7 +31,7 @@ public class Arm {
     }
 
     public void armScore() {
-        rightPivot.scaleRange(0, 0.7);
+        rightPivot.scaleRange(0, 0.675);
 
         leftPivot.setPwmDisable();
         rightPivot.setPosition(1);
@@ -44,9 +44,7 @@ public class Arm {
 
     public void loop(Gamepad gamepad) {
 
-         if(gamepad.cross) {
-             armScore();
-         }
+
 
     }
 }

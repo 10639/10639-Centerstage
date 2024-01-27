@@ -10,8 +10,8 @@ public class Constants {
     public static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     //19.7498748746487
 
-    static final double FIRST_LEVEL = 10;
-    static final double SECOND_LEVEL = 12;
+    static final double FIRST_LEVEL = 17;
+    static final double SECOND_LEVEL = 19;
     static final double THIRD_LEVEL = 20;
 
     public static final int LIFT_LEVEL_ZERO = 0;
@@ -27,7 +27,7 @@ public class Constants {
     //F -> Ability to counteract gravity and maintain its position (going up, down, and in place)
     // Feedforward component (F) -> Since we're doing this for a lift; we'll do a G value (gravity).
     //Refer to https://www.ctrlaltftc.com/feedforward-control#slide-gravity-feedforward
-    public static final double Kf = 0.12;
+    public static final double Kf = 0.04;
 
 
     /** ======= CONSTANTS FOR ARM  ======= **/
@@ -58,9 +58,15 @@ public class Constants {
     public static final double CONFIDENCE = 0.10;
 
     /** ======= CONSTANTS FOR DISTANCE SENSOR (CM) ======= **/
-    public static final double EMPTY_BOX = 200;
-    public static final double ONE_PIXEL = 100;
-    public static final double FULL_BOX = 10;
+    public static final double EMPTY_BOX_LOW = 10;
+    public static final double EMPTY_BOX_HIGH = 15;
+
+    public static final double ONE_PIXEL_LOW = 8;
+    public static final double ONE_PIXEL_HIGH = 9;
+
+    public static final double FULL_BOX_LOW = 1;
+    public static final double FULL_BOX_HIGH = 3;
+
 
 
 

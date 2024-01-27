@@ -18,7 +18,7 @@ public class PIDFLift extends OpMode {
     public DcMotorEx leftSlide, rightSlide;
     public Arm armSystem;
     public static int target = 0;
-    public static double p = 0.1, i = 0, d =0.00001;
+    public static double p = 0.1, i = 0, d = 0.00001;
     //Possible Value for P: 0.1;
     //Possible Value for D: 0.00001;
     public static double f = 0.12; //Possible Value 0.12;
@@ -55,24 +55,26 @@ public class PIDFLift extends OpMode {
         double pid = controller.calculate(leftPosition, target);
         double power = pid + f;
         if (pid < 0) { // Going down
-            power = Math.max(power, -0.17);
+            power = Math.max(power, -0.15);
         } else { //Going up
-            power = Math.min(power, 1); //Power Range 0 -> 1;
+            power = Math.min(power, 0.8); //Power Range 0 -> 1;
             if(target > 0) {
                 rightSlideRest = false;
             }
         }
         leftSlide.setPower(power);
         rightSlide.setPower(power);
-
+        if (leftSlide.getCurrentPosition() > 15) {
+            rightSlideRest = false;
+        }
         if( (target == 0)  ) {
-               while(rightSlide.getCurrentPosition() > 0 && !rightSlideRest) {
-                   rightSlide.setPower(-0.3);
-                   if(rightSlide.getCurrentPosition() == 0) {
-                       rightSlideRest = true;
-                       rightSlide.setPower(0);
-                       break;
-                   }
+            while ((rightSlide.getCurrentPosition() > 1 || rightSlide.getCurrentPosition() <= -1) && !rightSlideRest) {
+                rightSlide.setPower((Math.signum(rightSlide.getCurrentPosition() * -1) * 0.3));
+                if (rightSlide.getCurrentPosition() < 1 || rightSlide.getCurrentPosition() >= -1) {
+                    rightSlideRest = true;
+                    rightSlide.setPower(0);
+                    break;
+                }
             }
                while(leftSlide.getCurrentPosition() > 0) {
                    leftSlide.setPower(-0.3);

@@ -96,6 +96,7 @@ public class TeleOp extends LinearOpMode {
                 armSystem.loop(gamepad2);
                 intakeSystem.loop(gamepad2);
 
+
                 if (gamepad1.square) {
                     target = Constants.LIFT_FIRST_LEVEL;
                 } else if (gamepad1.triangle) {
@@ -112,10 +113,10 @@ public class TeleOp extends LinearOpMode {
                 double pid = controller.calculate(leftPosition, target);
                 double power = pid + Constants.Kf;
                 if (pid < 0) { // Going down
-                    power = Math.max(power, -0.17);
+                    power = Math.max(power, -0.1);
                     scoreAllowed = false;
                 } else { //Going up
-                    power = Math.min(power, 1); //Power Range 0 -> 1;
+                    power = Math.min(power, 0.8); //Power Range 0 -> 1;
                 }
                 leftSlide.setPower(power);
                 rightSlide.setPower(power);
@@ -127,7 +128,7 @@ public class TeleOp extends LinearOpMode {
                     armSystem.armIdle();
                 }
                 if (scoreAllowed) {
-                    if (gamepad2.cross) {
+                    if (gamepad2.cross || gamepad2.triangle) {
                         tiltBox = true;
                     }
                     if (tiltBox) {
@@ -142,39 +143,49 @@ public class TeleOp extends LinearOpMode {
                     armSystem.armIdle();
                     scoreAllowed = false;
                     tiltBox = false;
-                    while ((rightSlide.getCurrentPosition() > 1 || rightSlide.getCurrentPosition() <= -1) && !rightSlideRest) {
-                        rightSlide.setPower((Math.signum(rightSlide.getCurrentPosition() * -1) * 0.3));
-                        if (rightSlide.getCurrentPosition() < 1 || rightSlide.getCurrentPosition() >= -1) {
-                            rightSlideRest = true;
-                            rightSlide.setPower(0);
-                            break;
+                    if (leftSlide.getCurrentPosition() < 2 || (leftSlide.getCurrentPosition() < 0 && leftSlide.getCurrentPosition() >= -1)) {
+                        armSystem.dePower();
+                    } else if (leftSlide.getCurrentPosition() > 2 || leftSlide.getCurrentPosition() < 0) {
+                        while (leftSlide.getCurrentPosition() > 2 || leftSlide.getCurrentPosition() < 0) {
+                            leftSlide.setPower((Math.signum(leftSlide.getCurrentPosition() * -1) * 0.3));
                         }
+                        armSystem.dePower();
                     }
-                    while (leftSlide.getCurrentPosition() > 0) {
-                        leftSlide.setPower(-0.3);
-                        if (leftSlide.getCurrentPosition() == 0) {
-                            leftSlide.setPower(0);
-                            break;
-                        }
                     }
-                }
 
-                if (rightSlideRest) {
-                    armSystem.dePower();
-                    scoreAllowed = false;
-                    tiltBox = false;
-                }
+//                if (rightSlideRest) {
+//                    armSystem.dePower();
+//                    scoreAllowed = false;
+//                    tiltBox = false;
+//                }
 
-                telemetry.addData("leftPos", leftPosition);
-                telemetry.addData("rightPos", rightSlide.getCurrentPosition());
-                telemetry.addData("target", target);
-                telemetry.addData("Calculated PID", pid);
-                telemetry.addData("Slides Power", power);
-                telemetry.addData("Slide Direction:", pid < 0 ? "Down" : "Up");
-                telemetry.addData("Right Slide @ Rest", rightSlideRest);
-                telemetry.addData("Pixel Count", pixelDetector.getCount()) ;
-                telemetry.update();
+//                    telemetry.addData("leftPos", leftPosition);
+//                    telemetry.addData("rightPos", rightSlide.getCurrentPosition());
+//                    telemetry.addData("target", target);
+//                    telemetry.addData("Calculated PID", pid);
+//                    telemetry.addData("Slides Power", power);
+//                    telemetry.addData("Slide Direction:", pid < 0 ? "Down" : "Up");
+//                    telemetry.addData("Right Slide @ Rest", rightSlideRest);
+
+                if(pixelDetector.getCount() == Box.boxInfo.EMPTY) {
+                    telemetry.addLine("EMPTY");
+                } else if(pixelDetector.getCount() == Box.boxInfo.ONE_PIXEL) {
+                    telemetry.addLine("1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣" +
+                            "1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣" +
+                            "1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣" +
+                            "1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣" +
+                            "1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣" +
+                            "1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣");
+                } else {
+                    telemetry.addLine("✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️" +
+                            "✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️" +
+                            "✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️" +
+                            "✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️" +
+                            "✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️" +
+                            "✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️");
+                }
+                    telemetry.update();
+                }
             }
         }
     }
-}

@@ -75,11 +75,11 @@ public class BL_Preload extends LinearOpMode {
         });
 
         initPose = new Pose2d(13, 58, Math.toRadians(-270));
-        midwayVector = new Vector2d(13, 35);
-        leftVector = new Vector2d(22,35);
-        rightVector = new Vector2d(0, 35);
-        centerVector = new Vector2d(13, 30);
-        scoringVector = new Vector2d(47, 35);
+        midwayVector = new Vector2d(13, 30);
+        leftVector = new Vector2d(22,30);
+        rightVector = new Vector2d(0, 30);
+        centerVector = new Vector2d(13, 25);
+        scoringVector = new Vector2d(47, 30);
         parkingPose = new Vector2d(47,60);
         finalPose = new Vector2d(60, 60);
         double backwardsDistance = 3;
@@ -94,6 +94,8 @@ public class BL_Preload extends LinearOpMode {
                 .turn(Math.toRadians(turnAngle))
                 .lineToConstantHeading(scoringVector)
                 .strafeTo(parkingPose)
+                .turn(Math.toRadians(turnAngle))
+                .turn(Math.toRadians(turnAngle))
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { //0.5 Seconds after Strafing
                     intakeSystem.reverseSweep();
                     intakeSystem.boxReverseSweep();
@@ -111,12 +113,16 @@ public class BL_Preload extends LinearOpMode {
         TrajectorySequence rightPreload = driveTrain.trajectorySequenceBuilder(initPose)
                 .lineToConstantHeading(midwayVector)
                 .strafeTo(rightVector)
-                .lineToConstantHeading(new Vector2d(rightVector.getX(), rightVector.getY() + backwardsDistance))
-                .strafeTo(new Vector2d(midwayVector.getX(), rightVector.getY() + backwardsDistance))
+                .lineToConstantHeading(new Vector2d(rightVector.getX(), rightVector.getY() + backwardsDistance)) //Goes Back
+                .strafeTo(new Vector2d(midwayVector.getX(), rightVector.getY() + backwardsDistance)) //
                 .turn(Math.toRadians(turnAngle))
+                .setReversed(true)
                 .lineToConstantHeading(new Vector2d(scoringVector.getX(), rightVector.getY() + backwardsDistance))
+                .setReversed(false)
                 .strafeTo(parkingPose)
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { //0.5 Seconds after Strafing
+                .turn(Math.toRadians(turnAngle))
+                .turn(Math.toRadians(turnAngle))
+                .UNSTABLE_addTemporalMarkerOffset(1, () -> { //1 Seconds after Turning
                     intakeSystem.reverseSweep();
                     intakeSystem.boxReverseSweep();
                     intakeSystem.retractIntake();
