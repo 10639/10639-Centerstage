@@ -156,7 +156,7 @@ public class BL_Score extends LinearOpMode {
                 .strafeTo(new Vector2d(leftVector.getX(), rightVector.getY() + backwardsDistance))
                 .waitSeconds(1)
                 .strafeTo(new Vector2d(scoringVector.getX(), rightVector.getY() + backwardsDistance))
-                .lineToConstantHeading(new Vector2d(scoringVector.getX(), midwayVector.getY())) //Up to Y:30
+                .lineToConstantHeading(new Vector2d(scoringVector.getX(), midwayVector.getY() - (7))) //Up to Y:30
                 .turn(Math.toRadians(turnAngle))
                 .back(11)
                 .waitSeconds(1)

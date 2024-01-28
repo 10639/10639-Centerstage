@@ -159,10 +159,8 @@ public class RR_Score extends LinearOpMode {
                 .lineToConstantHeading(midwayVector)
                 .strafeTo(rightVector)
                 .lineToConstantHeading(new Vector2d(rightVector.getX(), rightVector.getY() + (backwardsDistance)))
-                .strafeTo(new Vector2d(leftVector.getX(), rightVector.getY() + (backwardsDistance)))
-                .waitSeconds(1)
                 .strafeTo(new Vector2d(scoringVector.getX(), rightVector.getY() + (backwardsDistance)))
-                .lineToConstantHeading(new Vector2d(scoringVector.getX(), midwayVector.getY()))
+                .lineToConstantHeading(new Vector2d(scoringVector.getX(), midwayVector.getY() + (-7)))
                 .turn(Math.toRadians(turnAngle))
                 .back(11)
                 .waitSeconds(1)
@@ -196,8 +194,10 @@ public class RR_Score extends LinearOpMode {
                 .lineToConstantHeading(midwayVector)
                 .strafeTo(leftVector)
                 .lineToConstantHeading(new Vector2d(leftVector.getX(), leftVector.getY() + backwardsDistance)) //Goes Back
-                .strafeTo(new Vector2d(scoringVector.getX(), rightVector.getY() + (backwardsDistance)))
-                .lineToConstantHeading(new Vector2d(scoringVector.getX(), leftVector.getY() + ((backwardsDistance) + (-2)))) //Goes Back
+                .strafeTo(new Vector2d(rightVector.getX(), leftVector.getY() + (backwardsDistance)))
+                .waitSeconds(1)
+                .strafeTo(new Vector2d(scoringVector.getX(), leftVector.getY() + (backwardsDistance)))
+                .lineToConstantHeading(new Vector2d(scoringVector.getX(), leftVector.getY() + (backwardsDistance + 2))) //Goes Forward
                 .turn(Math.toRadians(turnAngle))
                 .back(11)
                 .waitSeconds(1)
