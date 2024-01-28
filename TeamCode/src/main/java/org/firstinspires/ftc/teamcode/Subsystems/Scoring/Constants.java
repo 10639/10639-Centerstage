@@ -55,7 +55,7 @@ public class Constants {
 
 
     /** ======= CONSTANTS FOR VISION  ======= **/
-    public static final double CONFIDENCE = 0.10;
+    public static final double CONFIDENCE = 0.20;
 
     /** ======= CONSTANTS FOR DISTANCE SENSOR (CM) ======= **/
     public static final double EMPTY_BOX_LOW = 10;
