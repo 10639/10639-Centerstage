@@ -85,7 +85,7 @@ public class BL_Preload extends LinearOpMode {
         parkingPose = new Vector2d(47,58);
         finalPose = new Vector2d(65, 58);
         double backwardsDistance = 7;
-        double turnAngle = -115;
+        double turnAngle = -115; //Clockwise
 
 
         TrajectorySequence centerPreload = driveTrain.trajectorySequenceBuilder(initPose)

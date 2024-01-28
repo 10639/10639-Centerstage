@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Arm;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Box;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.BluePipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -22,7 +23,6 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class RR_Preload extends LinearOpMode {
 
     public SampleMecanumDrive driveTrain;
-
     public Arm armSystem;
     public Intake intakeSystem;
     public Box pixelDetector;
@@ -37,6 +37,7 @@ public class RR_Preload extends LinearOpMode {
     Vector2d rightVector;
     Vector2d finalPose;
     Vector2d parkingPose;
+    Vector2d retractPos;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -49,7 +50,7 @@ public class RR_Preload extends LinearOpMode {
 
         armSystem.init(); //De-Powers
         intakeSystem.init();
-
+        pixelDetector.init();
 
         int cameraMonitorViewId = hardwareMap.appContext
                 .getResources().getIdentifier(
@@ -76,26 +77,22 @@ public class RR_Preload extends LinearOpMode {
         });
 
         initPose = new Pose2d(13, -58, Math.toRadians(-270));
-        midwayVector = new Vector2d(13, -35);
-        leftVector = new Vector2d(22,-35);
-        rightVector = new Vector2d(0, -35);
-        centerVector = new Vector2d(13, -30);
-        scoringVector = new Vector2d(47, -35);
-        parkingPose = new Vector2d(47,-60);
-        finalPose = new Vector2d(60, -60);
-        double backwardsDistance = -3;
-        double turnAngle = -115;
-
+        retractPos = new Vector2d(13, -58);
+        midwayVector = new Vector2d(13, -30);
+        rightVector = new Vector2d(27,-30);
+        leftVector = new Vector2d(-1, -30);
+        centerVector = new Vector2d(13, -22);
+        scoringVector = new Vector2d(47, -30);
+        parkingPose = new Vector2d(47,-58);
+        finalPose = new Vector2d(65, -58);
+        double backwardsDistance = -7;
+        double turnAngle = -115; //Clockwise
 
         TrajectorySequence centerPreload = driveTrain.trajectorySequenceBuilder(initPose)
-                .lineToConstantHeading(midwayVector)
                 .lineToConstantHeading(centerVector)
-                .setReversed(true)
-                .lineToConstantHeading(midwayVector)
-                .setReversed(false)
+                .lineToConstantHeading(retractPos)
+                .strafeTo(finalPose)
                 .turn(Math.toRadians(turnAngle))
-                .lineToConstantHeading(scoringVector)
-                .strafeTo(parkingPose)
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { //0.5 Seconds after Strafing
                     intakeSystem.reverseSweep();
                     intakeSystem.boxReverseSweep();
@@ -107,17 +104,16 @@ public class RR_Preload extends LinearOpMode {
                     intakeSystem.terminateBoxSweeper();
                 })
                 .waitSeconds(0.5)
-                .lineToConstantHeading(finalPose)
                 .build();
 
         TrajectorySequence rightPreload = driveTrain.trajectorySequenceBuilder(initPose)
                 .lineToConstantHeading(midwayVector)
                 .strafeTo(rightVector)
-                .lineToConstantHeading(new Vector2d(rightVector.getX(), rightVector.getY() + (backwardsDistance)))
+                .lineToConstantHeading(new Vector2d(rightVector.getX(), rightVector.getY() + (backwardsDistance))) //Goes Back
                 .strafeTo(new Vector2d(midwayVector.getX(), rightVector.getY() + (backwardsDistance)))
+                .lineToConstantHeading(new Vector2d(midwayVector.getX(), 58)) //
+                .strafeTo(finalPose)
                 .turn(Math.toRadians(turnAngle))
-                .lineToConstantHeading(new Vector2d(scoringVector.getX(), rightVector.getY() + (backwardsDistance)))
-                .strafeTo(parkingPose)
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { //0.5 Seconds after Strafing
                     intakeSystem.reverseSweep();
                     intakeSystem.boxReverseSweep();
@@ -129,16 +125,15 @@ public class RR_Preload extends LinearOpMode {
                     intakeSystem.terminateBoxSweeper();
                 })
                 .waitSeconds(0.5)
-                .lineToConstantHeading(finalPose)
                 .build();
 
         TrajectorySequence leftPreload = driveTrain.trajectorySequenceBuilder(initPose)
                 .lineToConstantHeading(midwayVector)
                 .strafeTo(leftVector)
-                .lineToConstantHeading(new Vector2d(leftVector.getX(), leftVector.getY() + (backwardsDistance)))
+                .lineToConstantHeading(new Vector2d(leftVector.getX(), leftVector.getY() + (backwardsDistance))) //Goes Back
+                .lineToConstantHeading(new Vector2d(leftVector.getX(), 58)) //
+                .strafeTo(finalPose)
                 .turn(Math.toRadians(turnAngle))
-                .lineToConstantHeading(new Vector2d(scoringVector.getX(), leftVector.getY() + (backwardsDistance)))
-                .strafeTo(parkingPose)
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { //0.5 Seconds after Strafing
                     intakeSystem.reverseSweep();
                     intakeSystem.boxReverseSweep();
@@ -149,9 +144,8 @@ public class RR_Preload extends LinearOpMode {
                     intakeSystem.terminateSweep();
                     intakeSystem.terminateBoxSweeper();
                 })
-                .lineToConstantHeading(finalPose)
+                .waitSeconds(0.5)
                 .build();
-
 
 
 

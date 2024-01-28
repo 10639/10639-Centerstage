@@ -111,7 +111,7 @@ public class BL_Score extends LinearOpMode {
         parkingPose = new Vector2d(47,58);
         finalPose = new Vector2d(65, 58);
         double backwardsDistance = 7;
-        double turnAngle = 115;
+        double turnAngle = 115; //Counter-Clockwise
 
 
         TrajectorySequence centerPreload = driveTrain.trajectorySequenceBuilder(initPose)
@@ -119,7 +119,7 @@ public class BL_Score extends LinearOpMode {
                 .waitSeconds(0.5)
                 .lineToConstantHeading(midwayVector)
                 .strafeTo(new Vector2d(scoringVector.getX(), midwayVector.getY()))
-                .lineToConstantHeading(new Vector2d(scoringVector.getX(), midwayVector.getY() + 5))
+                .lineToConstantHeading(new Vector2d(scoringVector.getX(), midwayVector.getY() + 7))
                 .turn(Math.toRadians(turnAngle))
                 .back(11)
                 .waitSeconds(1)
@@ -156,7 +156,7 @@ public class BL_Score extends LinearOpMode {
                 .strafeTo(new Vector2d(leftVector.getX(), rightVector.getY() + backwardsDistance))
                 .waitSeconds(1)
                 .strafeTo(new Vector2d(scoringVector.getX(), rightVector.getY() + backwardsDistance))
-                .lineToConstantHeading(new Vector2d(scoringVector.getX(), midwayVector.getY()))
+                .lineToConstantHeading(new Vector2d(scoringVector.getX(), midwayVector.getY())) //Up to Y:30
                 .turn(Math.toRadians(turnAngle))
                 .back(11)
                 .waitSeconds(1)

@@ -19,8 +19,8 @@ public class RedPipeline extends OpenCvPipeline {
     } // constructor for the class to set up telemetry
 
     Mat mat = new Mat(); // declare a new matrix (computer representation of an image)
-    Rect leftRect = new Rect(450, 295, 200, 250); // define our regions of interest (where the algorithm is focusing on) as rectangles
-    Rect midRect = new Rect(745, 295, 350, 200);
+    Rect leftRect = new Rect(45, 75, 250, 250); // define our regions of interest (where the algorithm is focusing on) as rectangles
+    Rect midRect = new Rect(500, 75, 350, 200);
     //    Rect rightRect = new Rect(1080, 230, 200, 117);
     final double PERCENT_THRESHOLD = Constants.CONFIDENCE; // define our threshold
     private int finalAnswer;
