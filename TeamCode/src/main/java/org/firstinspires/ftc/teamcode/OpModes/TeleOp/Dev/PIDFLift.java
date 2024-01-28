@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Arm;
+import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Constants;
 
 @Config
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "PIDFLift_Test")
@@ -44,46 +45,42 @@ public class PIDFLift extends OpMode {
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftSlide.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         leftSlide.setDirection(DcMotor.Direction.FORWARD);
-
+        rightSlideRest = true;
     }
 
     @Override
     public void loop() {
 
-        controller.setPID(p, i, d);
+        controller.setPID(Constants.Kp, Constants.Ki, Constants.Kd);
         int leftPosition = leftSlide.getCurrentPosition();
         double pid = controller.calculate(leftPosition, target);
-        double power = pid + f;
+        double power = pid + Constants.Kf;
         if (pid < 0) { // Going down
-            power = Math.max(power, -0.15);
+            power = Math.max(power, -0.1);
         } else { //Going up
             power = Math.min(power, 0.8); //Power Range 0 -> 1;
-            if(target > 0) {
-                rightSlideRest = false;
-            }
         }
         leftSlide.setPower(power);
         rightSlide.setPower(power);
         if (leftSlide.getCurrentPosition() > 15) {
             rightSlideRest = false;
         }
-        if( (target == 0)  ) {
-            while ((rightSlide.getCurrentPosition() > 1 || rightSlide.getCurrentPosition() <= -1) && !rightSlideRest) {
-                rightSlide.setPower((Math.signum(rightSlide.getCurrentPosition() * -1) * 0.3));
-                if (rightSlide.getCurrentPosition() < 1 || rightSlide.getCurrentPosition() >= -1) {
-                    rightSlideRest = true;
-                    rightSlide.setPower(0);
-                    break;
-                }
-            }
-               while(leftSlide.getCurrentPosition() > 0) {
-                   leftSlide.setPower(-0.3);
-                   if(leftSlide.getCurrentPosition() == 0) {
-                       leftSlide.setPower(0);
-                       break;
-                   }
-               }
+        if (pid < 0) {
+            armSystem.armIdle();
         }
+
+        if ((target == 0)) { //Ensure Lifts are Fully Down (Observation: Right Slide Mainly Issues)
+            armSystem.armIdle();
+            if (leftSlide.getCurrentPosition() < 2 || (leftSlide.getCurrentPosition() < 0 && leftSlide.getCurrentPosition() >= -1)) {
+                armSystem.dePower();
+            } else if (leftSlide.getCurrentPosition() > 2 || leftSlide.getCurrentPosition() < 0) {
+                while (leftSlide.getCurrentPosition() > 2 || leftSlide.getCurrentPosition() < 0) {
+                    leftSlide.setPower((Math.signum(leftSlide.getCurrentPosition() * -1) * 0.3));
+                }
+                armSystem.dePower();
+            }
+        }
+
 
         telemetry.addData("leftPos", leftPosition);
         telemetry.addData("rightPos", rightSlide.getCurrentPosition());

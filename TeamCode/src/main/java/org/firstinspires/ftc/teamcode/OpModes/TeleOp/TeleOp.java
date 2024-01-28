@@ -73,6 +73,11 @@ public class TeleOp extends LinearOpMode {
         tiltBox = false;
         target = 0;
 
+        while (!isStarted()) {
+            telemetry.addLine("Ready to Start!)");
+            telemetry.addData("Pixel Storage", pixelDetector.getCount());
+            telemetry.update();
+        }
 
         if (isStopRequested()) return;
         while (!isStopRequested()) {
@@ -153,6 +158,35 @@ public class TeleOp extends LinearOpMode {
                     }
                     }
 
+                switch(pixelDetector.getCount()) {
+                    case EMPTY:
+                        telemetry.addLine("EMPTY");
+                        break;
+                    case ONE_PIXEL:
+                        telemetry.addLine("1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣" +
+                                "1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣" +
+                                "1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣" +
+                                "1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣" +
+                                "1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣" +
+                                "1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣");
+                        break;
+                    case FULL:
+                        telemetry.addLine("✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️" +
+                                "✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️" +
+                                "✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️" +
+                                "✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️" +
+                                "✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️" +
+                                "✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️");
+                        break;
+
+                }
+                    telemetry.update();
+                }
+            }
+        }
+    }
+
+
 //                if (rightSlideRest) {
 //                    armSystem.dePower();
 //                    scoreAllowed = false;
@@ -166,26 +200,3 @@ public class TeleOp extends LinearOpMode {
 //                    telemetry.addData("Slides Power", power);
 //                    telemetry.addData("Slide Direction:", pid < 0 ? "Down" : "Up");
 //                    telemetry.addData("Right Slide @ Rest", rightSlideRest);
-
-                if(pixelDetector.getCount() == Box.boxInfo.EMPTY) {
-                    telemetry.addLine("EMPTY");
-                } else if(pixelDetector.getCount() == Box.boxInfo.ONE_PIXEL) {
-                    telemetry.addLine("1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣" +
-                            "1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣" +
-                            "1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣" +
-                            "1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣" +
-                            "1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣" +
-                            "1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣1️⃣");
-                } else {
-                    telemetry.addLine("✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️" +
-                            "✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️" +
-                            "✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️" +
-                            "✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️" +
-                            "✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️" +
-                            "✌️✌️✌️✌️✌️✌️✌️✌️✌️✌️");
-                }
-                    telemetry.update();
-                }
-            }
-        }
-    }

@@ -32,7 +32,6 @@ public class BL_Score extends LinearOpMode {
 
     public Arm armSystem;
     public Intake intakeSystem;
-    public Box pixelDetector;
     BluePipeline pipeline;
     OpenCvWebcam webcam;
 
@@ -44,6 +43,7 @@ public class BL_Score extends LinearOpMode {
     Vector2d rightVector;
     Vector2d finalPose;
     Vector2d parkingPose;
+    Vector2d retractPos;
 
     public static int target = 0;
     public static boolean rightSlideRest = true;
@@ -62,7 +62,6 @@ public class BL_Score extends LinearOpMode {
         driveTrain = new SampleMecanumDrive(hardwareMap);
         armSystem = new Arm(hardwareMap);
         intakeSystem = new Intake(hardwareMap);
-        pixelDetector = new Box(hardwareMap);
 
         Lift lift = new Lift(hardwareMap);
         controller = new PIDController(Constants.Kp, Constants.Ki, Constants.Kd);
@@ -103,102 +102,125 @@ public class BL_Score extends LinearOpMode {
         });
 
         initPose = new Pose2d(13, 58, Math.toRadians(-270));
-        midwayVector = new Vector2d(13, 35);
-        leftVector = new Vector2d(22,35);
-        rightVector = new Vector2d(0, 35);
-        centerVector = new Vector2d(13, 30);
-        scoringVector = new Vector2d(47, 35);
-        parkingPose = new Vector2d(47,60);
-        finalPose = new Vector2d(60, 60);
-        double backwardsDistance = 3;
+        retractPos = new Vector2d(13, 58);
+        midwayVector = new Vector2d(13, 30);
+        leftVector = new Vector2d(27,30);
+        rightVector = new Vector2d(-1, 30);
+        centerVector = new Vector2d(13, 22);
+        scoringVector = new Vector2d(58, 30);
+        parkingPose = new Vector2d(47,58);
+        finalPose = new Vector2d(65, 58);
+        double backwardsDistance = 7;
         double turnAngle = 115;
 
 
-        TrajectorySequence midWayPos = driveTrain.trajectorySequenceBuilder(initPose)
-                .lineToConstantHeading(midwayVector)
-                .build();
-
-        TrajectorySequence centerPreload = driveTrain.trajectorySequenceBuilder(midWayPos.end())
-                .lineToConstantHeading(midwayVector)
+        TrajectorySequence centerPreload = driveTrain.trajectorySequenceBuilder(initPose)
                 .lineToConstantHeading(centerVector)
-                .setReversed(true)
+                .waitSeconds(0.5)
                 .lineToConstantHeading(midwayVector)
-                .setReversed(false)
+                .strafeTo(new Vector2d(scoringVector.getX(), midwayVector.getY()))
+                .lineToConstantHeading(new Vector2d(scoringVector.getX(), midwayVector.getY() + 5))
                 .turn(Math.toRadians(turnAngle))
-                .lineToConstantHeading(scoringVector)
-                .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> { //-0.5 Seconds BEFORE heading to Backdrop
+                .back(11)
+                .waitSeconds(1)
+                .addTemporalMarker(() -> {
                     target = Constants.LIFT_FIRST_LEVEL;
+                    scoreAllowed = true;
                     armSystem.armIdle();
-                })
-                .UNSTABLE_addTemporalMarkerOffset(0.1, () -> { //0.1 Seconds AFTER heading to Backdrop
-                    tiltBox = true; //Tilt Box
-                    armSystem.armIdle();
-                    intakeSystem.boxReverseSweep();
                 })
                 .waitSeconds(1)
-                .UNSTABLE_addTemporalMarkerOffset(0.3, () -> { //0.3 Seconds AFTER Waiting 1 Second
-                    intakeSystem.terminateBoxSweeper();
-                    tiltBox = false;
-                    armSystem.armIdle(); //Extra Restrictions to get Box Down Safely
-                    target = Constants.LIFT_LEVEL_ZERO;
+                .addTemporalMarker(() -> {
+                    tiltBox = true;
+                    armSystem.armScore();
                 })
-                .strafeTo(parkingPose)
-                .lineToConstantHeading(finalPose)
+                .waitSeconds(1)
+                .addTemporalMarker(() -> {
+                    intakeSystem.boxSweeper.setPower(0.5);
+                })
+                .waitSeconds(1)
+                .addTemporalMarker(() -> {
+                    intakeSystem.terminateBoxSweeper();
+                    target = Constants.LIFT_LEVEL_ZERO;
+                    scoreAllowed = false;
+                    tiltBox = false;
+                })
+                .forward(5)
+                .strafeRight(24)
+                .back(15)
                 .build();
 
-
-        TrajectorySequence rightPreload = driveTrain.trajectorySequenceBuilder(midWayPos.end())
+        TrajectorySequence rightPreload = driveTrain.trajectorySequenceBuilder(initPose)
                 .lineToConstantHeading(midwayVector)
                 .strafeTo(rightVector)
                 .lineToConstantHeading(new Vector2d(rightVector.getX(), rightVector.getY() + backwardsDistance))
-                .strafeTo(new Vector2d(midwayVector.getX(), rightVector.getY() + backwardsDistance))
+                .strafeTo(new Vector2d(leftVector.getX(), rightVector.getY() + backwardsDistance))
+                .waitSeconds(1)
+                .strafeTo(new Vector2d(scoringVector.getX(), rightVector.getY() + backwardsDistance))
+                .lineToConstantHeading(new Vector2d(scoringVector.getX(), midwayVector.getY()))
                 .turn(Math.toRadians(turnAngle))
-                .lineToConstantHeading(new Vector2d(scoringVector.getX(), rightVector.getY() + backwardsDistance))
-                .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> { //-0.5 Seconds BEFORE heading to Backdrop
+                .back(11)
+                .waitSeconds(1)
+                .addTemporalMarker(() -> {
                     target = Constants.LIFT_FIRST_LEVEL;
+                    scoreAllowed = true;
                     armSystem.armIdle();
-                })
-                .UNSTABLE_addTemporalMarkerOffset(0.1, () -> { //0.1 Seconds AFTER heading to Backdrop
-                    tiltBox = true; //Tilt Box
-                    armSystem.armIdle();
-                    intakeSystem.boxReverseSweep();
                 })
                 .waitSeconds(1)
-                .UNSTABLE_addTemporalMarkerOffset(0.3, () -> { //0.3 Seconds AFTER Waiting 1 Second
-                    intakeSystem.terminateBoxSweeper();
-                    tiltBox = false;
-                    armSystem.armIdle(); //Extra Restrictions to get Box Down Safely
-                    target = Constants.LIFT_LEVEL_ZERO;
+                .addTemporalMarker(() -> {
+                    tiltBox = true;
+                    armSystem.armScore();
                 })
-                .strafeTo(parkingPose)
-                .lineToConstantHeading(finalPose)
+                .waitSeconds(1)
+                .addTemporalMarker(() -> {
+                    intakeSystem.boxSweeper.setPower(0.5);
+                })
+                .waitSeconds(1)
+                .addTemporalMarker(() -> {
+                    intakeSystem.terminateBoxSweeper();
+                    target = Constants.LIFT_LEVEL_ZERO;
+                    scoreAllowed = false;
+                    tiltBox = false;
+                })
+                .forward(5)
+                .strafeRight(38)
+                .back(15)
                 .build();
 
-        TrajectorySequence leftPreload = driveTrain.trajectorySequenceBuilder(midWayPos.end())
+        TrajectorySequence leftPreload = driveTrain.trajectorySequenceBuilder(initPose)
                 .lineToConstantHeading(midwayVector)
                 .strafeTo(leftVector)
-                .lineToConstantHeading(new Vector2d(leftVector.getX(), leftVector.getY() + backwardsDistance))
+                .lineToConstantHeading(new Vector2d(leftVector.getX(), leftVector.getY() + backwardsDistance)) //Goes Back
+                .strafeTo(new Vector2d(scoringVector.getX(), rightVector.getY() + backwardsDistance))
+                .lineToConstantHeading(new Vector2d(scoringVector.getX(), leftVector.getY() + (backwardsDistance + 2))) //Goes Back
                 .turn(Math.toRadians(turnAngle))
-                .lineToConstantHeading(new Vector2d(scoringVector.getX(), leftVector.getY() + backwardsDistance))
-                .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> { //-0.5 Seconds BEFORE heading to Backdrop
+                .back(11)
+                .waitSeconds(1)
+                .addTemporalMarker(() -> {
                     target = Constants.LIFT_FIRST_LEVEL;
+                    scoreAllowed = true;
                     armSystem.armIdle();
-                })
-                .UNSTABLE_addTemporalMarkerOffset(0.1, () -> { //0.1 Seconds AFTER heading to Backdrop
-                    tiltBox = true; //Tilt Box
-                    armSystem.armIdle();
-                    intakeSystem.boxReverseSweep();
                 })
                 .waitSeconds(1)
-                .UNSTABLE_addTemporalMarkerOffset(0.3, () -> { //0.3 Seconds AFTER Waiting 1 Second
-                    intakeSystem.terminateBoxSweeper();
-                    tiltBox = false;
-                    armSystem.armIdle(); //Extra Restrictions to get Box Down Safely
-                    target = Constants.LIFT_LEVEL_ZERO;
+                .addTemporalMarker(() -> {
+                    tiltBox = true;
+                    armSystem.armScore();
                 })
-                .strafeTo(parkingPose)
-                .lineToConstantHeading(finalPose)
+                .waitSeconds(1)
+                .addTemporalMarker(() -> {
+                    intakeSystem.boxSweeper.setPower(0.5);
+                })
+                .waitSeconds(1)
+                .addTemporalMarker(() -> {
+                    intakeSystem.terminateBoxSweeper();
+                    target = Constants.LIFT_LEVEL_ZERO;
+                    scoreAllowed = false;
+                    tiltBox = false;
+                })
+                .forward(5)
+                .strafeRight(27)
+                .back(15)
                 .build();
+
 
         driveTrain.getLocalizer().setPoseEstimate(initPose);
         while (!isStarted()) {
@@ -239,8 +261,6 @@ public class BL_Score extends LinearOpMode {
                 telemetry.addData("Autonomous State", currentState);
                 telemetry.addData("Slides Target", target);
                 telemetry.addData("Right Slide @ Rest", rightSlideRest);
-                telemetry.addData("Pixel Count", pixelDetector.getCount());
-
                 telemetry.update();
                 driveTrain.update(); //Update deadwheel encoder counts
                 lift.update();
@@ -274,23 +294,25 @@ public class BL_Score extends LinearOpMode {
             double pid = controller.calculate(leftPosition, target);
             double power = pid + Constants.Kf;
             if (pid < 0) { // Going down
-                power = Math.max(power, -0.17);
+                power = Math.max(power, -0.1);
                 scoreAllowed = false;
             } else { //Going up
-                power = Math.min(power, 1); //Power Range 0 -> 1;
+                power = Math.min(power, 0.8); //Power Range 0 -> 1;
             }
             leftSlide.setPower(power);
             rightSlide.setPower(power);
-            if(leftSlide.getCurrentPosition() > 15) {
+            if (leftSlide.getCurrentPosition() > 15) {
                 rightSlideRest = false;
                 scoreAllowed = true;
             }
-            if(pid < 0) {
+            if (pid < 0) {
                 armSystem.armIdle();
             }
-            if(scoreAllowed) {
-
-                if(tiltBox) {
+            if (scoreAllowed) {
+                if (gamepad2.cross || gamepad2.triangle) {
+                    tiltBox = true;
+                }
+                if (tiltBox) {
                     armSystem.armScore();
                 } else {
                     armSystem.armIdle();
@@ -298,31 +320,18 @@ public class BL_Score extends LinearOpMode {
 
             }
 
-            if( (target == 0)  ) { //Ensure Lifts are Fully Down (Observation: Right Slide Mainly Issues)
+            if ((target == 0)) { //Ensure Lifts are Fully Down (Observation: Right Slide Mainly Issues)
                 armSystem.armIdle();
                 scoreAllowed = false;
                 tiltBox = false;
-                while( (rightSlide.getCurrentPosition() > 1 || rightSlide.getCurrentPosition() <= -1) && !rightSlideRest) {
-                    rightSlide.setPower( (Math.signum(rightSlide.getCurrentPosition() * -1) * 0.3) );
-                    if(rightSlide.getCurrentPosition() < 1 || rightSlide.getCurrentPosition() >= -1) {
-                        rightSlideRest = true;
-                        rightSlide.setPower(0);
-                        break;
+                if (leftSlide.getCurrentPosition() < 2 || (leftSlide.getCurrentPosition() < 0 && leftSlide.getCurrentPosition() >= -1)) {
+                    armSystem.dePower();
+                } else if (leftSlide.getCurrentPosition() > 2 || leftSlide.getCurrentPosition() < 0) {
+                    while (leftSlide.getCurrentPosition() > 2 || leftSlide.getCurrentPosition() < 0) {
+                        leftSlide.setPower((Math.signum(leftSlide.getCurrentPosition() * -1) * 0.3));
                     }
+                    armSystem.dePower();
                 }
-                while(leftSlide.getCurrentPosition() > 0) {
-                    leftSlide.setPower(-0.3);
-                    if(leftSlide.getCurrentPosition() == 0) {
-                        leftSlide.setPower(0);
-                        break;
-                    }
-                }
-            }
-
-            if(rightSlideRest) {
-                armSystem.dePower();
-                scoreAllowed = false;
-                tiltBox = false;
             }
         }
     }
