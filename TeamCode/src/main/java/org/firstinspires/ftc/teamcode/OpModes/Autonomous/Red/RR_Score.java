@@ -111,7 +111,7 @@ public class RR_Score extends LinearOpMode {
         retractPos = new Vector2d(13, -58);
         midwayVector = new Vector2d(13, -30);
         rightVector = new Vector2d(27,-30);
-        leftVector = new Vector2d(-1, -30);
+        leftVector = new Vector2d(-1, -25);
         centerVector = new Vector2d(13, -22);
         scoringVector = new Vector2d(58, -30);
         parkingPose = new Vector2d(47,-58);
@@ -127,7 +127,7 @@ public class RR_Score extends LinearOpMode {
                 .strafeTo(new Vector2d(scoringVector.getX(), midwayVector.getY()))
                 .lineToConstantHeading(new Vector2d(scoringVector.getX(), midwayVector.getY() + (-7)))
                 .turn(Math.toRadians(turnAngle))
-                .back(11)
+                .back(10)
                 .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     target = Constants.LIFT_FIRST_LEVEL;
@@ -144,13 +144,13 @@ public class RR_Score extends LinearOpMode {
                     intakeSystem.boxSweeper.setPower(0.5);
                 })
                 .waitSeconds(1)
+                .forward(5)
                 .addTemporalMarker(() -> {
                     intakeSystem.terminateBoxSweeper();
                     target = Constants.LIFT_LEVEL_ZERO;
                     scoreAllowed = false;
                     tiltBox = false;
                 })
-                .forward(5)
                 .strafeRight(24)
                 .back(15)
                 .build();
@@ -162,7 +162,7 @@ public class RR_Score extends LinearOpMode {
                 .strafeTo(new Vector2d(scoringVector.getX(), rightVector.getY() + (backwardsDistance)))
                 .lineToConstantHeading(new Vector2d(scoringVector.getX(), midwayVector.getY() + (-7)))
                 .turn(Math.toRadians(turnAngle))
-                .back(11)
+                .back(10)
                 .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     target = Constants.LIFT_FIRST_LEVEL;
@@ -179,13 +179,13 @@ public class RR_Score extends LinearOpMode {
                     intakeSystem.boxSweeper.setPower(0.5);
                 })
                 .waitSeconds(1)
+                .forward(5)
                 .addTemporalMarker(() -> {
                     intakeSystem.terminateBoxSweeper();
                     target = Constants.LIFT_LEVEL_ZERO;
                     scoreAllowed = false;
                     tiltBox = false;
                 })
-                .forward(5)
                 .strafeRight(38)
                 .back(15)
                 .build();
@@ -199,7 +199,7 @@ public class RR_Score extends LinearOpMode {
                 .strafeTo(new Vector2d(scoringVector.getX(), leftVector.getY() + (backwardsDistance)))
                 .lineToConstantHeading(new Vector2d(scoringVector.getX(), leftVector.getY() + (backwardsDistance + 2))) //Goes Forward
                 .turn(Math.toRadians(turnAngle))
-                .back(11)
+                .back(10)
                 .waitSeconds(1)
                 .addTemporalMarker(() -> {
                     target = Constants.LIFT_FIRST_LEVEL;
@@ -216,13 +216,13 @@ public class RR_Score extends LinearOpMode {
                     intakeSystem.boxSweeper.setPower(0.5);
                 })
                 .waitSeconds(1)
+                .forward(5)
                 .addTemporalMarker(() -> {
                     intakeSystem.terminateBoxSweeper();
                     target = Constants.LIFT_LEVEL_ZERO;
                     scoreAllowed = false;
                     tiltBox = false;
                 })
-                .forward(5)
                 .strafeRight(27)
                 .back(15)
                 .build();

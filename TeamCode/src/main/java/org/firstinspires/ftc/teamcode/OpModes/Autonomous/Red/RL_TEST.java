@@ -7,20 +7,20 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Arm;
-import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Box;
 import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Intake;
-import org.firstinspires.ftc.teamcode.Subsystems.Vision.BluePipeline;
+import org.firstinspires.ftc.teamcode.Subsystems.Scoring.Box;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.RedPipeline;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.firstinspires.ftc.teamcode.Subsystems.Vision.RedPipeline;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.BluePipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 
-@Autonomous(name = "🟥 Right Preload", preselectTeleOp = "CenterStage_TeleOp")
-public class RR_Preload extends LinearOpMode {
+@Autonomous(name = " Red Preload _ Left", preselectTeleOp = "CenterStage_TeleOp")
+public class RL_TEST extends LinearOpMode {
 
     public SampleMecanumDrive driveTrain;
     public Arm armSystem;
@@ -76,76 +76,37 @@ public class RR_Preload extends LinearOpMode {
             }
         });
 
-        initPose = new Pose2d(13, -58, Math.toRadians(-270));
-        retractPos = new Vector2d(13, -58);
-        midwayVector = new Vector2d(13, -30);
-        rightVector = new Vector2d(27,-30);
-        leftVector = new Vector2d(-1, -25);
-        centerVector = new Vector2d(13, -22);
-        scoringVector = new Vector2d(47, -30);
-        parkingPose = new Vector2d(47,-58);
-        finalPose = new Vector2d(65, -58);
-        double backwardsDistance = -7;
+        initPose = new Pose2d(13, 58, Math.toRadians(-270));
+        retractPos = new Vector2d(13, 58);
+        midwayVector = new Vector2d(13, 30);
+        leftVector = new Vector2d(27,30);
+        rightVector = new Vector2d(-1, 25);
+        centerVector = new Vector2d(13, 22);
+        scoringVector = new Vector2d(47, 30);
+        parkingPose = new Vector2d(47,58);
+        finalPose = new Vector2d(65, 58);
+        double backwardsDistance = 7;
         double turnAngle = -115; //Clockwise
+
 
         TrajectorySequence centerPreload = driveTrain.trajectorySequenceBuilder(initPose)
                 .lineToConstantHeading(centerVector)
                 .lineToConstantHeading(retractPos)
-                .strafeTo(finalPose)
-                .turn(Math.toRadians(turnAngle))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { //0.5 Seconds after Strafing
-                    intakeSystem.reverseSweep();
-                    intakeSystem.boxReverseSweep();
-                    intakeSystem.retractIntake();
-                })
-                .waitSeconds(1)
-                .UNSTABLE_addTemporalMarkerOffset(0.1, () -> { //0.1 Seconds AFTER wait seconds is over
-                    intakeSystem.terminateSweep();
-                    intakeSystem.terminateBoxSweeper();
-                })
-                .waitSeconds(0.5)
                 .build();
 
         TrajectorySequence rightPreload = driveTrain.trajectorySequenceBuilder(initPose)
                 .lineToConstantHeading(midwayVector)
                 .strafeTo(rightVector)
-                .lineToConstantHeading(new Vector2d(rightVector.getX(), rightVector.getY() + (backwardsDistance))) //Goes Back
-                .strafeTo(new Vector2d(midwayVector.getX(), rightVector.getY() + (backwardsDistance)))
-                .lineToConstantHeading(new Vector2d(midwayVector.getX(), 58)) //
-                .strafeTo(finalPose)
-                .turn(Math.toRadians(turnAngle))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { //0.5 Seconds after Strafing
-                    intakeSystem.reverseSweep();
-                    intakeSystem.boxReverseSweep();
-                    intakeSystem.retractIntake();
-                })
-                .waitSeconds(1)
-                .UNSTABLE_addTemporalMarkerOffset(0.1, () -> { //0.1 Seconds AFTER wait seconds is over
-                    intakeSystem.terminateSweep();
-                    intakeSystem.terminateBoxSweeper();
-                })
-                .waitSeconds(0.5)
+                .lineToConstantHeading(new Vector2d(rightVector.getX(), rightVector.getY() + backwardsDistance)) //Goes Back
+
                 .build();
 
         TrajectorySequence leftPreload = driveTrain.trajectorySequenceBuilder(initPose)
                 .lineToConstantHeading(midwayVector)
                 .strafeTo(leftVector)
-                .lineToConstantHeading(new Vector2d(leftVector.getX(), leftVector.getY() + (backwardsDistance))) //Goes Back
-                .lineToConstantHeading(new Vector2d(leftVector.getX(), 58)) //
-                .strafeTo(finalPose)
-                .turn(Math.toRadians(turnAngle))
-                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> { //0.5 Seconds after Strafing
-                    intakeSystem.reverseSweep();
-                    intakeSystem.boxReverseSweep();
-                    intakeSystem.retractIntake();
-                })
-                .waitSeconds(1)
-                .UNSTABLE_addTemporalMarkerOffset(0.1, () -> { //0.1 Seconds AFTER wait seconds is over
-                    intakeSystem.terminateSweep();
-                    intakeSystem.terminateBoxSweeper();
-                })
-                .waitSeconds(0.5)
+                .lineToConstantHeading(new Vector2d(leftVector.getX(), leftVector.getY() + backwardsDistance)) //Goes Back
                 .build();
+
 
 
 
@@ -169,7 +130,7 @@ public class RR_Preload extends LinearOpMode {
                 driveTrain.followTrajectorySequenceAsync(rightPreload);
                 break;
         }
-        RedPipeline.stop(webcam);
+        BluePipeline.stop(webcam);
 
         while (!isStopRequested()) {
             while (opModeIsActive()) {
@@ -179,12 +140,5 @@ public class RR_Preload extends LinearOpMode {
 
         }
 
-
-
-
-            }
-
-        }
-
-
-
+    }
+}

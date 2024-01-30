@@ -79,7 +79,7 @@ public class BL_Preload extends LinearOpMode {
         retractPos = new Vector2d(13, 58);
         midwayVector = new Vector2d(13, 30);
         leftVector = new Vector2d(27,30);
-        rightVector = new Vector2d(-1, 30);
+        rightVector = new Vector2d(-1, 25);
         centerVector = new Vector2d(13, 22);
         scoringVector = new Vector2d(47, 30);
         parkingPose = new Vector2d(47,58);
@@ -98,6 +98,7 @@ public class BL_Preload extends LinearOpMode {
                     intakeSystem.boxReverseSweep();
                     intakeSystem.retractIntake();
                 })
+
                 .waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(0.1, () -> { //0.1 Seconds AFTER wait seconds is over
                     intakeSystem.terminateSweep();
